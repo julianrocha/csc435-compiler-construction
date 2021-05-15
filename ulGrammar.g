@@ -56,15 +56,14 @@ type:	TYPE
 IF	: 'if'
 	;
 
-/* Fixme: add the other types here */
-TYPE	: 'int'
+/* Type keywords */
+TYPE	: 'int' | 'float' | 'char' | 'string' | 'boolean' | 'void'
 	;
 /*
- * FIXME:
  * Change this to match the specification for identifier
  * 
  */
-ID	: ('a'..'z')+ 
+ID	: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 	;
 
 /* These two lines match whitespace and comments 
