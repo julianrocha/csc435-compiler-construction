@@ -51,18 +51,41 @@ identifier : ID
 type:	TYPE
 	;
 
+literal : INT_CONSTANT |
+          STRING_CONSTANT |
+          CHAR_CONSTANT |
+          FLOAT_CONSTANT |
+          TRUE |
+          FALSE
+        ;
+
 /* Lexer */
 	 
-IF	: 'if'
-	;
+IF	: 'if';
+
+ELSE    : 'else';
+
+WHILE   : 'while';
+
+PRINT   : 'print';
+
+PRINTLN : 'println';
+
+RETURN  : 'return';
+
+/* Constants NEEDS TO BE TESTED */
+INT_CONSTANT : ('0'..'9')+;
+STRING_CONSTANT : .;
+CHAR_CONSTANT : .;
+FLOAT_CONSTANT : ('0'..'9')+ '.' ('0'..'9')+;
+TRUE : 'true';
+FALSE : 'false';
 
 /* Type keywords */
 TYPE	: 'int' | 'float' | 'char' | 'string' | 'boolean' | 'void'
 	;
-/*
- * Change this to match the specification for identifier
- * 
- */
+
+/* Identifiers cannot start with digit */
 ID	: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 	;
 
