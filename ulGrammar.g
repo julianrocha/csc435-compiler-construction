@@ -39,17 +39,24 @@ program : function+ EOF
 function: functionDecl functionBody
 	;
 
-functionDecl: type identifier '(' ')'
+functionDecl: compoundType identifier '(' formalParameters? ')' // not sure about ?
 	;
 
-functionBody: '{' '}'
+formalParameters: compoundType ID moreFormals*;
+
+moreFormals: ',' compoundType ID;
+
+functionBody: '{' varDecl* statement* '}'
 	;
+
+varDecl: compoundType ID ';';
 
 identifier : ID
 	;
 
-type:	TYPE
-	;
+compoundType    : TYPE |
+                  TYPE '['INT_CONSTANT']'
+	        ;
 
 literal : INT_CONSTANT |
           STRING_CONSTANT |
@@ -57,6 +64,36 @@ literal : INT_CONSTANT |
           FLOAT_CONSTANT |
           TRUE |
           FALSE
+        ;
+
+// statment and expr productions are causing errors
+
+statement:      ';' |
+                expr ';' |
+                IF '(' expr ')' block (ELSE block)? |   // not sure about ?
+                WHILE '(' expr ')' block |
+                PRINT expr ';' |
+                PRINTLN expr ';' |
+                RETURN expr? ';' |
+                ID '=' expr ';' |
+                ID '[' expr ']' '=' expr ';'
+        ;
+
+block: '{' statement* '}';
+
+expr:   //expr OP expr |
+        ID '[' expr ']' |
+        ID '(' expr ')' |
+        ID |
+        literal |
+        '(' expr ')'
+        ;
+
+OP:     '==' |
+        '<' |
+        '+' |
+        '-' |
+        '*'
         ;
 
 /* Lexer */
@@ -75,8 +112,8 @@ RETURN  : 'return';
 
 /* Constants NEEDS TO BE TESTED */
 INT_CONSTANT : ('0'..'9')+;
-STRING_CONSTANT : .;
-CHAR_CONSTANT : .;
+STRING_CONSTANT : '"' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ')* '"'; // can we have empty string literal: ""
+CHAR_CONSTANT : '\'' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ') '\'';    // can we have empty char literal: ''
 FLOAT_CONSTANT : ('0'..'9')+ '.' ('0'..'9')+;
 TRUE : 'true';
 FALSE : 'false';
