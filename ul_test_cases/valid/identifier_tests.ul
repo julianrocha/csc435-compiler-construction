@@ -1,0 +1,16 @@
+void main ()
+{
+    int azAZ_09;
+    float _;
+    char [10] a;
+
+    a[5] = 'c';
+}
+
+void azAZ_09azAZ_09(float[5] azAZ_09, string s, int i){
+    return;
+}
+
+void __(){
+    return;
+}

@@ -1,5 +1,7 @@
 grammar ulGrammar;
 
+// TODO: Consdier running locally with grun profiler for better debugging
+
 options { backtrack=true;} // added backtracking as per Lecture Note
 				
 @members
@@ -75,8 +77,8 @@ type:
 statement:
         SEMI_COLON
         | expr SEMI_COLON
-        | IF OPEN_PAREN expr CLOSED_PAREN block
         | IF OPEN_PAREN expr CLOSED_PAREN block ELSE block
+        | IF OPEN_PAREN expr CLOSED_PAREN block
         | WHILE OPEN_PAREN expr CLOSED_PAREN block
         | PRINT expr SEMI_COLON
         | PRINTLN expr SEMI_COLON
@@ -90,12 +92,7 @@ block:
         ;
 
 expr:  
-        multExpr ( op multExpr)* // pattern to handle left-recursion https://meri-stuff.blogspot.com/2011/09/antlr-tutorial-expression-language.html
-        | ID OPEN_BRACKET expr CLOSED_BRACKET
-        | ID OPEN_PAREN exprList CLOSED_PAREN
-        | ID
-        | literal
-        | OPEN_PAREN expr CLOSED_PAREN
+        ltExpr ( CMP_EQUAL ltExpr)* // pattern for precedence on page 61 of: http://index-of.es/Programming/Pragmatic%20Programmers/The%20Definitive%20ANTLR%20Reference.pdf
         ;
 
 literal:
@@ -118,23 +115,24 @@ exprMore:
 
 
 /* Helper rules: */
+ltExpr:
+        plusMinusExpr (LESS_THAN plusMinusExpr)*
+        ;
+
+plusMinusExpr:
+        multExpr ((PLUS | MINUS) multExpr)*
+        ;
 
 multExpr:
-        atom ( op atom)*
+        atom ( MULTIPLY atom)*
         ;
 
 atom:
         ID
+        | ID OPEN_PAREN exprList CLOSED_PAREN
+        | ID OPEN_BRACKET expr CLOSED_BRACKET
         | literal
-        ;
-
-// TODO: I don't think this handles precedence properly, need to test
-op:
-        CMP_EQUAL
-        | LESS_THAN
-        | PLUS
-        | MINUS
-        | MULTIPLY
+        | OPEN_PAREN expr CLOSED_PAREN
         ;
 
 /* Lexer: */
@@ -173,13 +171,20 @@ CLOSED_BRACKET: ']';
 OPEN_BRACE: '{';
 CLOSED_BRACE: '}';
 
-/* Constants NEEDS TO BE TESTED */
-INT_CONSTANT : ('0'..'9')+;
-STRING_CONSTANT : '"' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ')+ '"'; // Assume we cannot have empty string
-CHAR_CONSTANT : '\'' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ') '\'';    // Assume we cannot have empty char
-FLOAT_CONSTANT : ('0'..'9')+ '.' ('0'..'9')+; // Assume we cannot have 0 digits on either side
+/* Boolean constants */
 TRUE : 'true';
 FALSE : 'false';
+
+/* Constants NEEDS TO BE TESTED */
+fragment DIGIT: ('0'..'9');
+fragment CHARACTER: ('a'..'z'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ');
+
+INT_CONSTANT : DIGIT+;
+FLOAT_CONSTANT : DIGIT+ '.' DIGIT+; // Assume we cannot have 0 digits on either side
+CHAR_CONSTANT : '\'' CHARACTER '\'';    // Assume we cannot have empty char
+STRING_CONSTANT : '"' CHARACTER+ '"'; // Assume we cannot have empty string
+
+
 
 /* Identifiers, cannot start with digit */
 ID: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

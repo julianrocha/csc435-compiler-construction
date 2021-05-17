@@ -29,4 +29,8 @@ void main ()
     c = '{';
     c = '}';
     c = ' ';
+
+    s = "this is a string";
+    s = "azAZ09!,.:_{} ";
+    s = "_";
 }
