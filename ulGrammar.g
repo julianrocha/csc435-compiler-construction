@@ -1,4 +1,6 @@
 grammar ulGrammar;
+
+options { backtrack=true;} // added backtracking as per Lecture Note
 				
 @members
 {
@@ -24,115 +26,169 @@ public Object recoverFromMismatchedSet (IntStream input,
         }
 }
 
-/*
- * This is a subset of the ulGrammar to show you how
- * to make new production rules.
- * You will need to:
- *  - change type to be compoundType and include appropriate productions
- *  - introduce optional formalParameters
- *  - change functionBody to include variable declarations and statements 
- */
+/* Parser Rules: */
 
-program : function+ EOF
+// EOF indicates this is the start rule (root of tree)
+program :
+        function+ EOF
 	;
 
-function: functionDecl functionBody
+function:
+        functionDecl functionBody
 	;
 
-functionDecl: compoundType identifier '(' formalParameters? ')' // not sure about ?
+functionDecl:
+        compoundType ID OPEN_PAREN formalParameters CLOSED_PAREN
 	;
 
-formalParameters: compoundType ID moreFormals*;
-
-moreFormals: ',' compoundType ID;
-
-functionBody: '{' varDecl* statement* '}'
-	;
-
-varDecl: compoundType ID ';';
-
-identifier : ID
-	;
-
-compoundType    : TYPE |
-                  TYPE '['INT_CONSTANT']'
-	        ;
-
-literal : INT_CONSTANT |
-          STRING_CONSTANT |
-          CHAR_CONSTANT |
-          FLOAT_CONSTANT |
-          TRUE |
-          FALSE
+formalParameters:
+        compoundType ID moreFormals*
+        |
         ;
 
-// statment and expr productions are causing errors
-
-statement:      ';' |
-                expr ';' |
-                IF '(' expr ')' block (ELSE block)? |   // not sure about ?
-                WHILE '(' expr ')' block |
-                PRINT expr ';' |
-                PRINTLN expr ';' |
-                RETURN expr? ';' |
-                ID '=' expr ';' |
-                ID '[' expr ']' '=' expr ';'
+moreFormals:
+        COMMA compoundType ID
         ;
 
-block: '{' statement* '}';
+functionBody:
+        OPEN_BRACE varDecl* statement* CLOSED_BRACE
+	;
 
-expr:   //expr OP expr |
-        ID '[' expr ']' |
-        ID '(' expr ')' |
-        ID |
-        literal |
-        '(' expr ')'
+varDecl:
+        compoundType ID SEMI_COLON
         ;
 
-OP:     '==' |
-        '<' |
-        '+' |
-        '-' |
-        '*'
+compoundType:
+        type
+        | type OPEN_BRACKET INT_CONSTANT CLOSED_BRACKET
+	;
+
+type:
+        INT
+        | FLOAT
+        | CHAR
+        | STRING
+        | BOOLEAN
+        | VOID
         ;
 
-/* Lexer */
-	 
-IF	: 'if';
+statement:
+        SEMI_COLON
+        | expr SEMI_COLON
+        | IF OPEN_PAREN expr CLOSED_PAREN block
+        | IF OPEN_PAREN expr CLOSED_PAREN block ELSE block
+        | WHILE OPEN_PAREN expr CLOSED_PAREN block
+        | PRINT expr SEMI_COLON
+        | PRINTLN expr SEMI_COLON
+        | RETURN expr? SEMI_COLON
+        | ID ASSIGN_EQUAL expr SEMI_COLON
+        | ID OPEN_BRACKET expr CLOSED_BRACKET ASSIGN_EQUAL expr SEMI_COLON
+        ;
 
-ELSE    : 'else';
+block:
+        OPEN_BRACE statement* CLOSED_BRACE
+        ;
 
-WHILE   : 'while';
+expr:  
+        multExpr ( op multExpr)* // pattern to handle left-recursion https://meri-stuff.blogspot.com/2011/09/antlr-tutorial-expression-language.html
+        | ID OPEN_BRACKET expr CLOSED_BRACKET
+        | ID OPEN_PAREN exprList CLOSED_PAREN
+        | ID
+        | literal
+        | OPEN_PAREN expr CLOSED_PAREN
+        ;
 
-PRINT   : 'print';
+literal:
+        INT_CONSTANT
+        | STRING_CONSTANT
+        | CHAR_CONSTANT
+        | FLOAT_CONSTANT
+        | TRUE
+        | FALSE
+        ;
 
-PRINTLN : 'println';
+exprList:
+        expr exprMore*
+        |
+        ;
 
-RETURN  : 'return';
+exprMore:
+        COMMA expr
+        ;
+
+
+/* Helper rules: */
+
+multExpr:
+        atom ( op atom)*
+        ;
+
+atom:
+        ID
+        | literal
+        ;
+
+// TODO: I don't think this handles precedence properly, need to test
+op:
+        CMP_EQUAL
+        | LESS_THAN
+        | PLUS
+        | MINUS
+        | MULTIPLY
+        ;
+
+/* Lexer: */
+
+/* Operators */
+CMP_EQUAL: '==';
+LESS_THAN: '<';
+PLUS: '+';
+MINUS: '-';
+MULTIPLY: '*';
+
+/* Structural Keywords */
+IF: 'if';
+ELSE: 'else';
+WHILE: 'while';
+PRINT: 'print';
+PRINTLN: 'println';
+RETURN: 'return';
+
+/* Type keywords */
+INT: 'int';
+FLOAT: 'float';
+CHAR: 'char';
+STRING: 'string';
+BOOLEAN: 'boolean';
+VOID: 'void';
+
+/* Punctuation Symbols */
+OPEN_PAREN: '(';
+CLOSED_PAREN: ')';
+COMMA: ',';
+SEMI_COLON: ';';
+ASSIGN_EQUAL: '=';
+OPEN_BRACKET: '[';
+CLOSED_BRACKET: ']';
+OPEN_BRACE: '{';
+CLOSED_BRACE: '}';
 
 /* Constants NEEDS TO BE TESTED */
 INT_CONSTANT : ('0'..'9')+;
-STRING_CONSTANT : '"' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ')* '"'; // can we have empty string literal: ""
-CHAR_CONSTANT : '\'' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ') '\'';    // can we have empty char literal: ''
-FLOAT_CONSTANT : ('0'..'9')+ '.' ('0'..'9')+;
+STRING_CONSTANT : '"' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ')+ '"'; // Assume we cannot have empty string
+CHAR_CONSTANT : '\'' ('a'..'b'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ') '\'';    // Assume we cannot have empty char
+FLOAT_CONSTANT : ('0'..'9')+ '.' ('0'..'9')+; // Assume we cannot have 0 digits on either side
 TRUE : 'true';
 FALSE : 'false';
 
-/* Type keywords */
-TYPE	: 'int' | 'float' | 'char' | 'string' | 'boolean' | 'void'
-	;
-
-/* Identifiers cannot start with digit */
-ID	: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
-	;
+/* Identifiers, cannot start with digit */
+ID: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 
 /* These two lines match whitespace and comments 
  * and ignore them.
  * You want to leave these as last in the file.  
  * Add new lexical rules above 
  */
-WS      : ( '\t' | ' ' | ('\r' | '\n') )+ { $channel = HIDDEN;}
-        ;
+WS: ( '\t' | ' ' | ('\r' | '\n') )+ { $channel = HIDDEN;};
 
-COMMENT : '//' ~('\r' | '\n')* ('\r' | '\n') { $channel = HIDDEN;}
-        ;
+COMMENT: '//' ~('\r' | '\n')* ('\r' | '\n') { $channel = HIDDEN;};
