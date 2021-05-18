@@ -1,0 +1,13 @@
+void main ()
+{
+    // With proper precedence, this should be true
+    if(0 - 10 == 3 + (4 - 3 * 2) * 4 - 5 ) {
+        if (5 - (1 * 3) < (5 - 1) * 3) { // With proper precedence this should also be true
+            println "precedence succeeded";
+        } else {
+            println "2nd precedence test failed!";
+        }
+    } else {
+        println "1st precedence test failed!";
+    }
+}
