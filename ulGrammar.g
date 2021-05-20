@@ -44,7 +44,7 @@ functionDecl:
 	;
 
 formalParameters:
-        compoundType ID moreFormals*
+        compoundType ID moreFormals* // may want to split this?
         |
         ;
 
@@ -62,7 +62,7 @@ varDecl:
 
 compoundType:
         type
-        | type OPEN_BRACKET INT_CONSTANT CLOSED_BRACKET
+        | type OPEN_BRACKET INT_CONSTANT CLOSED_BRACKET // may want to split this?
 	;
 
 type:
@@ -75,18 +75,27 @@ type:
         ;
 
 statement:
-        SEMI_COLON
-        | expr SEMI_COLON
-        | IF OPEN_PAREN expr CLOSED_PAREN block ELSE block
-        | IF OPEN_PAREN expr CLOSED_PAREN block
-        | WHILE OPEN_PAREN expr CLOSED_PAREN block
-        | PRINT expr SEMI_COLON
-        | PRINTLN expr SEMI_COLON
-        | RETURN expr? SEMI_COLON
-        | ID ASSIGN_EQUAL expr SEMI_COLON
-        | ID OPEN_BRACKET expr CLOSED_BRACKET ASSIGN_EQUAL expr SEMI_COLON
-        ;
+        SEMI_COLON |
+        exprStatement|
+        ifElseStatement |
+        ifStatement |
+        whileStatement |
+        printStatement |
+        printlnStatement |
+        returnStatement |
+        assignmentStatement |
+        arrayAssignmentStatement; 
 
+exprStatement: expr SEMI_COLON;
+ifElseStatement: IF OPEN_PAREN expr CLOSED_PAREN block ELSE block;
+ifStatement: IF OPEN_PAREN expr CLOSED_PAREN block;
+whileStatement: WHILE OPEN_PAREN expr CLOSED_PAREN block;
+printStatement: PRINT expr SEMI_COLON;
+printlnStatement: PRINTLN expr SEMI_COLON;
+returnStatement: RETURN expr? SEMI_COLON;
+assignmentStatement: ID ASSIGN_EQUAL expr SEMI_COLON;
+arrayAssignmentStatement: ID OPEN_BRACKET expr CLOSED_BRACKET ASSIGN_EQUAL expr SEMI_COLON;
+        
 block:
         OPEN_BRACE statement* CLOSED_BRACE
         ;
@@ -96,13 +105,20 @@ expr:
         ;
 
 literal:
-        INT_CONSTANT
-        | STRING_CONSTANT
-        | CHAR_CONSTANT
-        | FLOAT_CONSTANT
-        | TRUE
-        | FALSE
+        intLiteral |
+        stringLiteral |
+        charLiteral |
+        floatLiteral |
+        trueLiteral |
+        falseLiteral
         ;
+        
+intLiteral: INT_CONSTANT;
+stringLiteral: STRING_CONSTANT;
+charLiteral: CHAR_CONSTANT;
+floatLiteral: FLOAT_CONSTANT;
+trueLiteral: TRUE;
+falseLiteral: FALSE;
 
 exprList:
         expr exprMore*
@@ -129,11 +145,15 @@ multExpr:
 
 atom:
         ID
-        | ID OPEN_PAREN exprList CLOSED_PAREN
-        | ID OPEN_BRACKET expr CLOSED_BRACKET
         | literal
-        | OPEN_PAREN expr CLOSED_PAREN
+        | funcCall
+        | arrayAccess
+        | exprInParens
         ;
+
+funcCall: ID OPEN_PAREN exprList CLOSED_PAREN;
+arrayAccess: ID OPEN_BRACKET expr CLOSED_BRACKET;
+exprInParens: OPEN_PAREN expr CLOSED_PAREN;
 
 /* Lexer: */
 
