@@ -1,7 +1,5 @@
 grammar ulGrammar;
 
-// TODO: Consdier running locally with grun profiler for better debugging
-
 options { backtrack=true;} // added backtracking as per Lecture Note
 				
 @members
@@ -40,16 +38,16 @@ function:
 	;
 
 functionDecl:
-        compoundType ID OPEN_PAREN formalParameters CLOSED_PAREN
+        compoundType ID OPEN_PAREN formalParameterList CLOSED_PAREN
 	;
 
-formalParameters:
-        compoundType ID moreFormals* // may want to split this?
+formalParameterList:
+        formalParameter (COMMA formalParameter)*
         |
         ;
 
-moreFormals:
-        COMMA compoundType ID
+formalParameter:
+        compoundType ID
         ;
 
 functionBody:
@@ -101,7 +99,7 @@ block:
         ;
 
 expr:  
-        ltExpr ( CMP_EQUAL ltExpr)* // pattern for precedence on page 61 of: http://index-of.es/Programming/Pragmatic%20Programmers/The%20Definitive%20ANTLR%20Reference.pdf
+        eqExpr // pattern for precedence on page 61 of: http://index-of.es/Programming/Pragmatic%20Programmers/The%20Definitive%20ANTLR%20Reference.pdf
         ;
 
 literal:
@@ -109,28 +107,24 @@ literal:
         stringLiteral |
         charLiteral |
         floatLiteral |
-        trueLiteral |
-        falseLiteral
+        booleanLiteral
         ;
         
 intLiteral: INT_CONSTANT;
 stringLiteral: STRING_CONSTANT;
 charLiteral: CHAR_CONSTANT;
 floatLiteral: FLOAT_CONSTANT;
-trueLiteral: TRUE;
-falseLiteral: FALSE;
+booleanLiteral: TRUE | FALSE;
 
 exprList:
-        expr exprMore*
+        expr (COMMA expr)*
         |
         ;
 
-exprMore:
-        COMMA expr
+eqExpr:  
+        ltExpr ( CMP_EQUAL ltExpr)*
         ;
 
-
-/* Helper rules: */
 ltExpr:
         plusMinusExpr (LESS_THAN plusMinusExpr)*
         ;
@@ -147,13 +141,13 @@ atom:
         ID
         | literal
         | funcCall
-        | arrayAccess
-        | exprInParens
+        | arrayRef
+        | parenExpr
         ;
 
 funcCall: ID OPEN_PAREN exprList CLOSED_PAREN;
-arrayAccess: ID OPEN_BRACKET expr CLOSED_BRACKET;
-exprInParens: OPEN_PAREN expr CLOSED_PAREN;
+arrayRef: ID OPEN_BRACKET expr CLOSED_BRACKET;
+parenExpr: OPEN_PAREN expr CLOSED_PAREN;
 
 /* Lexer: */
 
@@ -195,7 +189,7 @@ CLOSED_BRACE: '}';
 TRUE : 'true';
 FALSE : 'false';
 
-/* Constants NEEDS TO BE TESTED */
+/* Constants */
 fragment DIGIT: ('0'..'9');
 fragment CHARACTER: ('a'..'z'|'A'..'Z'|'0'..'9'|'!'|','|'.'|':'|'_'|'{'|'}'|' ');
 
@@ -203,8 +197,6 @@ INT_CONSTANT : DIGIT+;
 FLOAT_CONSTANT : DIGIT+ '.' DIGIT+; // Assume we cannot have 0 digits on either side
 CHAR_CONSTANT : '\'' CHARACTER '\'';    // Assume we cannot have empty char
 STRING_CONSTANT : '"' CHARACTER+ '"'; // Assume we cannot have empty string
-
-
 
 /* Identifiers, cannot start with digit */
 ID: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
