@@ -1,7 +1,5 @@
 package type;
 
-import ast.*;
-
 public class VoidType extends Type {
 
     public VoidType(int l, int o){

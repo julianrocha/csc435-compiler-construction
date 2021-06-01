@@ -1,7 +1,6 @@
 package ast;
 
 import type.*;
-import ast.Identifier;
 
 public class FormalParameter extends ASTNode{
 

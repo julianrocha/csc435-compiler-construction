@@ -1,7 +1,5 @@
 package type;
 
-import ast.*;
-
 public class IntegerType extends Type {
 
     public IntegerType(int l, int o){

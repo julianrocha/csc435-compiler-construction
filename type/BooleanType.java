@@ -1,7 +1,5 @@
 package type;
 
-import ast.*;
-
 public class BooleanType extends Type {
 
     public BooleanType(int l, int o){

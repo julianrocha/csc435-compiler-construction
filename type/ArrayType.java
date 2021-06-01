@@ -1,7 +1,5 @@
 package type;
 
-import ast.*;
-
 public class ArrayType extends Type {
 
     Type element_type;

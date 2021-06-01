@@ -1,7 +1,5 @@
 package type;
 
-import ast.*;
-
 public class CharType extends Type {
 
     public CharType(int l, int o){
