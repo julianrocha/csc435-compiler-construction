@@ -7,6 +7,7 @@
 
 import org.antlr.runtime.*;
 import java.io.*;
+import ast.*;
 
 public class Compiler {
 	public static void main (String[] args) throws Exception {
@@ -25,7 +26,9 @@ public class Compiler {
 		ulGrammarParser parser = new ulGrammarParser(tokens);
 
 		try {
-			parser.program();
+			Program tree = parser.program(); // Invoke 'program' as this is the start production rule
+			PrettyPrintVisitor prettyPrintVisitor = new PrettyPrintVisitor();
+			tree.accept(prettyPrintVisitor);
 		}
 		catch (RecognitionException e )	{
 			// A lexical or parsing error occured.

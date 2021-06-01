@@ -8,7 +8,7 @@ grammar: $(GSRCS)
 	@java org.antlr.Tool -fo . $(GSRC) 
 
 compiler:
-	@javac *.java
+	@javac *.java -Xlint:unchecked -Xdiags:verbose
 
 
 GRAMMATICALLY_INVALID_FILES := $(shell ls ./ul_test_cases/grammatically_invalid/)
@@ -38,5 +38,6 @@ test: grammar compiler
 clean:
 	@rm *.class $(GNAME)*.java $(GNAME).tokens
 
-
+print: grammar compiler
+	@java Compiler ul_test_cases/valid/just_main.ul
  
