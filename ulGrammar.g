@@ -122,22 +122,26 @@ ifElseStatement
 		};
 ifStatement
 	returns[IfStatement s]:
-	IF OPEN_PAREN expr CLOSED_PAREN block;
+	IF OPEN_PAREN expr CLOSED_PAREN block {s = new IfStatement($expr.e,$block.slist);};
 whileStatement
 	returns[WhileStatement s]:
-	WHILE OPEN_PAREN expr CLOSED_PAREN block;
+	WHILE OPEN_PAREN expr CLOSED_PAREN block {s = new WhileStatement($expr.e,$block.slist);};
 printStatement
-	returns[PrintStatement s]: PRINT expr SEMI_COLON;
+	returns[PrintStatement s]:
+	PRINT expr SEMI_COLON {s = new PrintStatement($expr.e);};
 printlnStatement
-	returns[PrintlnStatement s]: PRINTLN expr SEMI_COLON;
+	returns[PrintlnStatement s]:
+	PRINTLN expr SEMI_COLON {s = new PrintlnStatement($expr.e);};
 returnStatement
-	returns[ReturnStatement s]: RETURN expr? SEMI_COLON;
+	returns[ReturnStatement s]:
+	RETURN expr? SEMI_COLON {s = new ReturnStatement($expr.e);};
 assignmentStatement
 	returns[AssignmentStatement s]:
-	id ASSIGN_EQUAL expr SEMI_COLON;
+	id ASSIGN_EQUAL expr SEMI_COLON {s = new AssignmentStatement($id.i,$expr.e);};
 arrayAssignmentStatement
 	returns[ArrayAssignmentStatement s]:
-	id OPEN_BRACKET expr CLOSED_BRACKET ASSIGN_EQUAL expr SEMI_COLON;
+	id OPEN_BRACKET e1 = expr CLOSED_BRACKET ASSIGN_EQUAL e2 = expr SEMI_COLON {s = new ArrayAssignmentStatement($id.i,$e1.e,$e2.e);
+		};
 
 block
 	returns[List<Statement> slist]
@@ -150,21 +154,32 @@ expr
 literal
 	returns[Expression l]:
 	intLiteral {l = $intLiteral.l;}
-	| stringLiteral
-	| charLiteral
-	| floatLiteral
-	| booleanLiteral;
+	| stringLiteral {l = $stringLiteral.l;}
+	| charLiteral {l = $charLiteral.l;}
+	| floatLiteral {l = $floatLiteral.l;}
+	| booleanLiteral {l = $booleanLiteral.l;};
 
 intLiteral
 	returns[IntegerLiteral l]:
 	i = INT_CONSTANT {l = new IntegerLiteral(Integer.parseInt($i.text),$i.line,$i.pos);};
-stringLiteral: STRING_CONSTANT;
-charLiteral: CHAR_CONSTANT;
-floatLiteral: FLOAT_CONSTANT;
-booleanLiteral: TRUE | FALSE;
+stringLiteral
+	returns[StringLiteral l]:
+	s = STRING_CONSTANT {l = new StringLiteral($s.text.substring(1,$s.text.length()-1),$s.line,$s.pos);
+		};
+charLiteral
+	returns[CharLiteral l]:
+	c = CHAR_CONSTANT {l = new CharLiteral($c.text.charAt(1),$c.line,$c.pos);};
+floatLiteral
+	returns[FloatLiteral l]:
+	f = FLOAT_CONSTANT {l = new FloatLiteral(Float.parseFloat($f.text),$f.line,$f.pos);};
+booleanLiteral
+	returns[BooleanLiteral l]:
+	b = TRUE {l = new BooleanLiteral(true,$b.line,$b.pos);}
+	| b = FALSE {l = new BooleanLiteral(false,$b.line,$b.pos);};
 
 exprList
-	returns[Expression e]: expr (COMMA expr)* |;
+	returns[List<Expression> l]
+	@init {l = new ArrayList<Expression>();}: e1 = expr {l.add($e1.e);} (COMMA e2 = expr {l.add($e2.e);})* |;
 
 eqExpr
 	returns[Expression e]
@@ -203,15 +218,21 @@ multExpr
 
 atom
 	returns[Expression e]:
-	id
+	id {e = $id.i;}
 	| literal {e = $literal.l;}
-	| funcCall
-	| arrayRef
-	| parenExpr;
+	| funcCall {e = $funcCall.f;}
+	| arrayRef {e = $arrayRef.r;}
+	| parenExpr {e = $parenExpr.e;};
 
-funcCall: id OPEN_PAREN exprList CLOSED_PAREN;
-arrayRef: id OPEN_BRACKET expr CLOSED_BRACKET;
-parenExpr: OPEN_PAREN expr CLOSED_PAREN;
+funcCall
+	returns[FunctionCall f]:
+	id OPEN_PAREN exprList CLOSED_PAREN {f = new FunctionCall($id.i,$exprList.l);};
+arrayRef
+	returns[ArrayReference r]:
+	id OPEN_BRACKET expr CLOSED_BRACKET {r = new ArrayReference($id.i,$expr.e);};
+parenExpr
+	returns[ParenExpression e]:
+	OPEN_PAREN expr CLOSED_PAREN {e = new ParenExpression($expr.e);};
 
 /* Lexer: */
 

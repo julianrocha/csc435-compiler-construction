@@ -1,13 +1,14 @@
-package ast.statement;
+package ast.expression;
 
-import ast.expression.Expression;
 import ast.visitors.Visitor;
 
-public class PrintStatement extends Statement {
+public class ArrayReference extends Expression {
 
+    public Identifier id;
     public Expression expr;
 
-    public PrintStatement(Expression expr) {
+    public ArrayReference(Identifier id, Expression expr) {
+        this.id = id;
         this.expr = expr;
     }
 

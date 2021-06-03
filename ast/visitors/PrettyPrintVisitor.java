@@ -38,6 +38,12 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.print(str);
     }
 
+    private void print_block(List<Statement> slist) {
+        for (Statement s : slist) {
+            s.accept(this);
+        }
+    }
+
     @Override
     public Object visit(Program program) {
         for (Function f : program.funcList) {
@@ -63,9 +69,7 @@ public class PrettyPrintVisitor implements Visitor {
         for (VariableDeclaration d : functionBody.vlist) {
             visit(d);
         }
-        for (Statement s : functionBody.slist) {
-            s.accept(this);
-        }
+        print_block(functionBody.slist);
         return null;
     }
 
@@ -171,17 +175,13 @@ public class PrettyPrintVisitor implements Visitor {
         print_line(")");
         print_line("{");
         indented_blocks++;
-        for (Statement s : ifElseStatement.ifBlock) {
-            s.accept(this);
-        }
+        print_block(ifElseStatement.ifBlock);
         indented_blocks--;
         print_line("}");
         print_line("else");
         print_line("{");
         indented_blocks++;
-        for (Statement s : ifElseStatement.elseBlock) {
-            s.accept(this);
-        }
+        print_block(ifElseStatement.elseBlock);
         indented_blocks--;
         print_line("}");
         return null;
@@ -238,6 +238,129 @@ public class PrettyPrintVisitor implements Visitor {
     @Override
     public Object visit(IntegerLiteral integerLiteral) {
         print(Integer.toString(integerLiteral.value));
+        return null;
+    }
+
+    @Override
+    public Object visit(FunctionCall functionCall) {
+        visit(functionCall.id);
+        print("(");
+        List<Expression> lst = functionCall.exprList;
+        if (lst.size() >= 1) {
+            lst.get(0).accept(this);
+        }
+        for (Expression e : functionCall.exprList) {
+            if (e == lst.get(0))
+                continue;
+            print(", ");
+            e.accept(this);
+        }
+        print(")");
+        return null;
+    }
+
+    @Override
+    public Object visit(ArrayReference arrayReference) {
+        visit(arrayReference.id);
+        print("[");
+        arrayReference.expr.accept(this);
+        print("]");
+        return null;
+    }
+
+    @Override
+    public Object visit(StringLiteral stringLiteral) {
+        print("\"" + stringLiteral.value + "\"");
+        return null;
+    }
+
+    @Override
+    public Object visit(CharLiteral charLiteral) {
+        print("'" + charLiteral.value + "'");
+        return null;
+    }
+
+    @Override
+    public Object visit(FloatLiteral floatLiteral) {
+        print(Float.toString(floatLiteral.value));
+        return null;
+    }
+
+    @Override
+    public Object visit(BooleanLiteral booleanLiteral) {
+        print(Boolean.toString(booleanLiteral.value));
+        return null;
+    }
+
+    @Override
+    public Object visit(AssignmentStatement assignmentStatement) {
+        visit(assignmentStatement.id);
+        print("=");
+        assignmentStatement.expr.accept(this);
+        print_line(";");
+        return null;
+    }
+
+    @Override
+    public Object visit(IfStatement ifStatement) {
+        print("if(");
+        ifStatement.expr.accept(this);
+        print_line(")");
+        print_line("{");
+        indented_blocks++;
+        print_block(ifStatement.block);
+        indented_blocks--;
+        print_line("}");
+        return null;
+    }
+
+    @Override
+    public Object visit(PrintStatement printStatement) {
+        print("print ");
+        printStatement.expr.accept(this);
+        print_line(";");
+        return null;
+    }
+
+    @Override
+    public Object visit(WhileStatement whileStatement) {
+        print("while (");
+        whileStatement.expr.accept(this);
+        print_line(")");
+        print_line("{");
+        indented_blocks++;
+        print_block(whileStatement.block);
+        indented_blocks--;
+        print_line("}");
+        return null;
+    }
+
+    @Override
+    public Object visit(PrintlnStatement printlnStatement) {
+        print("println ");
+        printlnStatement.expr.accept(this);
+        print_line(";");
+        return null;
+    }
+
+    @Override
+    public Object visit(ReturnStatement returnStatement) {
+        print("return ");
+        if (returnStatement.expr != null) {
+            returnStatement.expr.accept(this);
+        }
+        print_line(";");
+        return null;
+    }
+
+    @Override
+    public Object visit(ArrayAssignmentStatement arrayAssignmentStatement) {
+        visit(arrayAssignmentStatement.id);
+        print("[");
+        arrayAssignmentStatement.index_expr.accept(this);
+        print("]=");
+        arrayAssignmentStatement.assign_expr.accept(this);
+        print_line(";");
         return null;
     }
 

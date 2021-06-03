@@ -2,13 +2,7 @@ package ast.visitors;
 
 import ast.type.*;
 import ast.*;
-import ast.expression.AddExpression;
-import ast.expression.EqualityExpression;
-import ast.expression.IntegerLiteral;
-import ast.expression.LessThanExpression;
-import ast.expression.MultExpression;
-import ast.expression.ParenExpression;
-import ast.expression.SubtractExpression;
+import ast.expression.*;
 import ast.statement.*;
 
 public interface Visitor {
@@ -58,4 +52,30 @@ public interface Visitor {
     Object visit(AddExpression addExpression);
 
     Object visit(IntegerLiteral integerLiteral);
+
+    Object visit(FunctionCall functionCall);
+
+    Object visit(ArrayReference arrayReference);
+
+    Object visit(StringLiteral stringLiteral);
+
+    Object visit(CharLiteral charLiteral);
+
+    Object visit(FloatLiteral floatLiteral);
+
+    Object visit(BooleanLiteral booleanLiteral);
+
+    Object visit(AssignmentStatement assignmentStatement);
+
+    Object visit(IfStatement ifStatement);
+
+    Object visit(PrintStatement printStatement);
+
+    Object visit(WhileStatement whileStatement);
+
+    Object visit(PrintlnStatement printlnStatement);
+
+    Object visit(ReturnStatement returnStatement);
+
+    Object visit(ArrayAssignmentStatement arrayAssignmentStatement);
 }

@@ -1,8 +1,8 @@
-package ast;
+package ast.expression;
 
 import ast.visitors.Visitor;
 
-public class Identifier extends ASTNode {
+public class Identifier extends Expression {
 
     public String id_string;
 
