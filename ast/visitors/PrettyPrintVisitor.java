@@ -3,6 +3,7 @@ package ast.visitors;
 import java.util.List;
 
 import ast.*;
+import ast.expression.*;
 import ast.statement.*;
 import ast.type.*;
 
@@ -115,7 +116,8 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(ArrayType type) {
-        print(type.element_type.toString() + "[" + Integer.toString(type.array_size) + "]");
+        type.element_type.accept(this);
+        print("[" + Integer.toString(type.array_size) + "]");
         return null;
     }
 
@@ -152,6 +154,90 @@ public class PrettyPrintVisitor implements Visitor {
     @Override
     public Object visit(BooleanType booleanType) {
         print("boolean");
+        return null;
+    }
+
+    @Override
+    public Object visit(ExpressionStatement expressionStatement) {
+        expressionStatement.expr.accept(this);
+        print_line(";");
+        return null;
+    }
+
+    @Override
+    public Object visit(IfElseStatement ifElseStatement) {
+        print("if(");
+        ifElseStatement.ifExpr.accept(this);
+        print_line(")");
+        print_line("{");
+        indented_blocks++;
+        for (Statement s : ifElseStatement.ifBlock) {
+            s.accept(this);
+        }
+        indented_blocks--;
+        print_line("}");
+        print_line("else");
+        print_line("{");
+        indented_blocks++;
+        for (Statement s : ifElseStatement.elseBlock) {
+            s.accept(this);
+        }
+        indented_blocks--;
+        print_line("}");
+        return null;
+    }
+
+    @Override
+    public Object visit(EqualityExpression equalityExpression) {
+        equalityExpression.lhsExpr.accept(this);
+        print("==");
+        equalityExpression.rhsExpr.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(LessThanExpression lessThanExpression) {
+        lessThanExpression.lhsExpr.accept(this);
+        print("<");
+        lessThanExpression.rhsExpr.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(SubtractExpression subtractExpression) {
+        subtractExpression.lhsExpr.accept(this);
+        print("-");
+        subtractExpression.rhsExpr.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(MultExpression multExpression) {
+        multExpression.lhsExpr.accept(this);
+        print("*");
+        multExpression.rhsExpr.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(ParenExpression parenExpression) {
+        print("(");
+        parenExpression.expr.accept(this);
+        print(")");
+        return null;
+    }
+
+    @Override
+    public Object visit(AddExpression addExpression) {
+        addExpression.lhsExpr.accept(this);
+        print("+");
+        addExpression.rhsExpr.accept(this);
+        return null;
+    }
+
+    @Override
+    public Object visit(IntegerLiteral integerLiteral) {
+        print(Integer.toString(integerLiteral.value));
         return null;
     }
 

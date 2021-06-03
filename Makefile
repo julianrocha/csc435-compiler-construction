@@ -2,7 +2,7 @@
 GNAME= ulGrammar
 GSRC= $(GNAME).g
 
-all: grammar compiler test
+all: grammar compiler 
 
 grammar: $(GSRCS)
 	@java org.antlr.Tool -fo . $(GSRC) 

@@ -2,12 +2,12 @@ package ast.expression;
 
 import ast.visitors.Visitor;
 
-public class AddExpression extends Expression {
+public class MultExpression extends Expression {
 
     public Expression lhsExpr;
     public Expression rhsExpr;
 
-    public AddExpression(Expression lhsExpr, Expression rhsExpr) {
+    public MultExpression(Expression lhsExpr, Expression rhsExpr) {
         this.lhsExpr = lhsExpr;
         this.rhsExpr = rhsExpr;
     }

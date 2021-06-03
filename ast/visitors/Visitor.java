@@ -2,6 +2,13 @@ package ast.visitors;
 
 import ast.type.*;
 import ast.*;
+import ast.expression.AddExpression;
+import ast.expression.EqualityExpression;
+import ast.expression.IntegerLiteral;
+import ast.expression.LessThanExpression;
+import ast.expression.MultExpression;
+import ast.expression.ParenExpression;
+import ast.expression.SubtractExpression;
 import ast.statement.*;
 
 public interface Visitor {
@@ -34,4 +41,21 @@ public interface Visitor {
 
     Object visit(BooleanType booleanType);
 
+    Object visit(ExpressionStatement expressionStatement);
+
+    Object visit(IfElseStatement ifElseStatement);
+
+    Object visit(EqualityExpression equalityExpression);
+
+    Object visit(LessThanExpression lessThanExpression);
+
+    Object visit(SubtractExpression subtractExpression);
+
+    Object visit(MultExpression multExpression);
+
+    Object visit(ParenExpression parenExpression);
+
+    Object visit(AddExpression addExpression);
+
+    Object visit(IntegerLiteral integerLiteral);
 }
