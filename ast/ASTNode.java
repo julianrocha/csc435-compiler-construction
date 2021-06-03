@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitors.Visitor;
+
 public abstract class ASTNode {
 	public int line;
 	public int offset;
@@ -9,11 +11,11 @@ public abstract class ASTNode {
 		offset = -1;
 	}
 
-	public ASTNode(int l, int o){
+	public ASTNode(int l, int o) {
 		line = l;
 		offset = o;
 	}
 
 	public abstract Object accept(Visitor v);
-	
+
 }

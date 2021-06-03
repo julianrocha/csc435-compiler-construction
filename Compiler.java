@@ -8,16 +8,16 @@
 import org.antlr.runtime.*;
 import java.io.*;
 import ast.*;
+import ast.visitors.PrettyPrintVisitor;
 
 public class Compiler {
-	public static void main (String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		ANTLRInputStream input;
 
-		if (args.length == 0 ) {
+		if (args.length == 0) {
 			System.out.println("Usage: Compiler filename.ul");
 			return;
-		}
-		else {
+		} else {
 			input = new ANTLRInputStream(new FileInputStream(args[0]));
 		}
 
@@ -29,14 +29,12 @@ public class Compiler {
 			Program tree = parser.program(); // Invoke 'program' as this is the start production rule
 			PrettyPrintVisitor prettyPrintVisitor = new PrettyPrintVisitor();
 			tree.accept(prettyPrintVisitor);
-		}
-		catch (RecognitionException e )	{
+		} catch (RecognitionException e) {
 			// A lexical or parsing error occured.
 			// ANTLR will have already printed information on the
-			// console due to code added to the grammar.  So there is
+			// console due to code added to the grammar. So there is
 			// nothing to do here.
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println(e);
 			e.printStackTrace();
 		}

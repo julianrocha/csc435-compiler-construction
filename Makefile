@@ -36,8 +36,4 @@ test: grammar compiler
 	done
 
 clean:
-	@rm *.class $(GNAME)*.java $(GNAME).tokens
-
-print: grammar compiler
-	@java Compiler ul_test_cases/valid/just_main.ul
- 
+	@rm *.class $(GNAME)*.java $(GNAME).tokens ast/*.class ast/type/*.class ast/statement/*.class ast/expression/*.class ast/visitors/*.class

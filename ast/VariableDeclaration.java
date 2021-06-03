@@ -3,12 +3,12 @@ package ast;
 import ast.type.*;
 import ast.visitors.Visitor;
 
-public class FormalParameter extends ASTNode {
+public class VariableDeclaration extends ASTNode {
 
     public Type type;
     public Identifier id;
 
-    public FormalParameter(Type type, Identifier id) {
+    public VariableDeclaration(Type type, Identifier id) {
         this.type = type;
         this.id = id;
     }
