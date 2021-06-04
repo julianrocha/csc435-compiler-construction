@@ -7,8 +7,8 @@ import ast.visitors.Visitor;
 
 public class FunctionBody extends ASTNode {
 
-    public List<VariableDeclaration> vlist;
-    public List<Statement> slist;
+    public List<VariableDeclaration> vlist; // may be empty
+    public List<Statement> slist; // may be empty
 
     public FunctionBody(List<VariableDeclaration> vlist, List<Statement> slist) {
         this.vlist = vlist;

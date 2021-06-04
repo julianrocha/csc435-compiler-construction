@@ -8,7 +8,7 @@ public class ArrayType extends Type {
     public int array_size;
 
     public ArrayType(Type element_type, int array_size) {
-        this.element_type = element_type; // TODO: ensure this is not another ArrayType
+        this.element_type = element_type; // asummed from lexer that this is not another ArrayType
         this.array_size = array_size;
     }
 

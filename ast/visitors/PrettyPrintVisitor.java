@@ -18,16 +18,20 @@ public class PrettyPrintVisitor implements Visitor {
         cursor_new_line = true;
     }
 
+    // Print the string preceeded by proper indent and cursor moved to new line
     private void print_line(String str) {
         print(str);
         new_line();
     }
 
+    // Move cursor to newline
     private void new_line() {
         System.out.println();
         cursor_new_line = true;
     }
 
+    // Print the string precedded by proper indent. If indent already occured then
+    // just append
     private void print(String str) {
         if (cursor_new_line) {
             for (int i = 0; i < tab_size * indented_blocks; i++) {
@@ -38,6 +42,7 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.print(str);
     }
 
+    // Visit a list of statements in order
     private void print_block(List<Statement> slist) {
         for (Statement s : slist) {
             s.accept(this);
@@ -47,7 +52,7 @@ public class PrettyPrintVisitor implements Visitor {
     @Override
     public Object visit(Program program) {
         for (Function f : program.funcList) {
-            visit(f);
+            f.accept(this);
             new_line();
         }
         return null;
@@ -55,10 +60,10 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(Function function) {
-        visit(function.funcDecl);
+        function.funcDecl.accept(this);
         print_line("{");
         indented_blocks++;
-        visit(function.funcBody);
+        function.funcBody.accept(this);
         indented_blocks--;
         print_line("}");
         return null;
@@ -67,7 +72,10 @@ public class PrettyPrintVisitor implements Visitor {
     @Override
     public Object visit(FunctionBody functionBody) {
         for (VariableDeclaration d : functionBody.vlist) {
-            visit(d);
+            d.accept(this);
+        }
+        if (functionBody.vlist.size() > 0 && functionBody.slist.size() > 0) {
+            new_line();
         }
         print_block(functionBody.slist);
         return null;
@@ -77,18 +85,18 @@ public class PrettyPrintVisitor implements Visitor {
     public Object visit(FunctionDeclaration functionDeclaration) {
         functionDeclaration.type.accept(this);
         print(" ");
-        visit(functionDeclaration.id);
+        functionDeclaration.id.accept(this);
         print("(");
 
         List<FormalParameter> fpl = functionDeclaration.formalParameterList;
         if (fpl.size() >= 1) {
-            visit(fpl.get(0));
+            fpl.get(0).accept(this);
         }
         for (FormalParameter fp : fpl) {
             if (fp == fpl.get(0))
                 continue;
             print(", ");
-            visit(fp);
+            fp.accept(this);
         }
 
         print_line(")");
@@ -99,7 +107,7 @@ public class PrettyPrintVisitor implements Visitor {
     public Object visit(FormalParameter formalParameter) {
         formalParameter.type.accept(this);
         print(" ");
-        visit(formalParameter.id);
+        formalParameter.id.accept(this);
         return null;
     }
 
@@ -113,7 +121,7 @@ public class PrettyPrintVisitor implements Visitor {
     public Object visit(VariableDeclaration variableDeclaration) {
         variableDeclaration.type.accept(this);
         print(" ");
-        visit(variableDeclaration.id);
+        variableDeclaration.id.accept(this);
         print_line(";");
         return null;
     }
@@ -170,7 +178,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(IfElseStatement ifElseStatement) {
-        print("if(");
+        print("if (");
         ifElseStatement.ifExpr.accept(this);
         print_line(")");
         print_line("{");
@@ -243,7 +251,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(FunctionCall functionCall) {
-        visit(functionCall.id);
+        functionCall.id.accept(this);
         print("(");
         List<Expression> lst = functionCall.exprList;
         if (lst.size() >= 1) {
@@ -261,7 +269,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(ArrayReference arrayReference) {
-        visit(arrayReference.id);
+        arrayReference.id.accept(this);
         print("[");
         arrayReference.expr.accept(this);
         print("]");
@@ -294,7 +302,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(AssignmentStatement assignmentStatement) {
-        visit(assignmentStatement.id);
+        assignmentStatement.id.accept(this);
         print("=");
         assignmentStatement.expr.accept(this);
         print_line(";");
@@ -303,7 +311,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(IfStatement ifStatement) {
-        print("if(");
+        print("if (");
         ifStatement.expr.accept(this);
         print_line(")");
         print_line("{");
@@ -355,7 +363,7 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(ArrayAssignmentStatement arrayAssignmentStatement) {
-        visit(arrayAssignmentStatement.id);
+        arrayAssignmentStatement.id.accept(this);
         print("[");
         arrayAssignmentStatement.index_expr.accept(this);
         print("]=");
