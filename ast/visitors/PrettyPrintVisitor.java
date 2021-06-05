@@ -51,9 +51,12 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(Program program) {
+        program.funcList.get(0).accept(this);
         for (Function f : program.funcList) {
-            f.accept(this);
+            if (f == program.funcList.get(0))
+                continue;
             new_line();
+            f.accept(this);
         }
         return null;
     }
@@ -86,7 +89,7 @@ public class PrettyPrintVisitor implements Visitor {
         functionDeclaration.type.accept(this);
         print(" ");
         functionDeclaration.id.accept(this);
-        print("(");
+        print(" (");
 
         List<FormalParameter> fpl = functionDeclaration.formalParameterList;
         if (fpl.size() >= 1) {
@@ -260,7 +263,7 @@ public class PrettyPrintVisitor implements Visitor {
         for (Expression e : functionCall.exprList) {
             if (e == lst.get(0))
                 continue;
-            print(", ");
+            print(",");
             e.accept(this);
         }
         print(")");
@@ -353,8 +356,9 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(ReturnStatement returnStatement) {
-        print("return ");
+        print("return");
         if (returnStatement.expr != null) {
+            print(" ");
             returnStatement.expr.accept(this);
         }
         print_line(";");

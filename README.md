@@ -9,3 +9,25 @@ export CLASSPATH=/Users/julianrocha/code/csc435-compiler-construction/antlr.jar:
 # ~/.bashrc
 export CLASSPATH=/home/julianrocha/Desktop/csc435-compiler-construction/antlr.jar:$CLASSPATH
 ```
+
+# Building, Testing, and Running
+To build the compiler, run:
+```
+$ make
+```
+To deleted compiled executables, run:
+```
+$ make clean
+```
+To build and run tests, run:
+```
+$ make test
+```
+Alternatively, the tests can be run directly without re-building by running the test script directly:
+```
+$ ./test_script.sh
+```
+To compile a sample UL program, `my_program.ul` in the same directory as `Compiler.class`, first build the compiler and then run:
+```
+$ java Compiler my_program.ul
+```

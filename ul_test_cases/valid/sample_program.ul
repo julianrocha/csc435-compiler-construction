@@ -1,13 +1,17 @@
-// sample.ul
-int factorial (int n) {
-    if (n == 1) {
+int factorial (int n)
+{
+    if (n==1)
+    {
         return 1;
     }
-    else {
+    else
+    {
         return n*factorial(n-1);
     }
 }
-void main () {
+
+void main ()
+{
     print "The factorial of 8 is ";
     println factorial(8);
 }

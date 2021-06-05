@@ -1,3 +1,4 @@
-void main(){
-    3 < 4;
+void main ()
+{
+    3<4;
 }

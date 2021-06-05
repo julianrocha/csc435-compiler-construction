@@ -1,0 +1,24 @@
+int factorial(int n){
+    ;
+    ;
+    ;
+    ;
+    if(n == 1){
+        return 1;
+    } else {
+        return n * factorial(n - 1); // comment
+    }
+} // another comment
+void main(){
+    ;
+    ;
+    print "The factorial of 8 is ";
+    println factorial(8);
+    // x = 3;
+    ;
+    ;
+    ;
+
+}
+
+// comment and then EOF

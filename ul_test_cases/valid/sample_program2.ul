@@ -14,12 +14,14 @@ int sampleOne (int x, float y)
 void sampleTwo (int x)
 {
     float[10] b;
+
     while (x<10)
     {
         x=x-1;
     }
     x=8;
 }
+
 void main ()
 {
     string[10] a;

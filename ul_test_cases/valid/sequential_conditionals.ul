@@ -1,21 +1,24 @@
-void main() {
-	int x;
-	int y;
-	x = 1;
-	y = 0;
-	if(x == 1){
-	
-	}
-	if(y == 0){
-	
-	}
-	if(x == 0){
-	
-	}
-	else {
-	    print "success";
-	}
-	if(y == x) {
-	
-	}
+void main ()
+{
+    int x;
+    int y;
+
+    x=1;
+    y=0;
+    if (x==1)
+    {
+    }
+    if (y==0)
+    {
+    }
+    if (x==0)
+    {
+    }
+    else
+    {
+        print "success";
+    }
+    if (y==x)
+    {
+    }
 }
