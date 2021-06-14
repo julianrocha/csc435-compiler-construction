@@ -131,44 +131,43 @@ public class PrettyPrintVisitor implements Visitor {
 
     @Override
     public Object visit(ArrayType type) {
-        type.element_type.accept(this);
-        print("[" + Integer.toString(type.array_size) + "]");
+        print(type.toString());
         return null;
     }
 
     @Override
     public Object visit(CharType type) {
-        print("char");
+        print(type.toString());
         return null;
     }
 
     @Override
     public Object visit(FloatType type) {
-        print("float");
+        print(type.toString());
         return null;
     }
 
     @Override
     public Object visit(IntegerType type) {
-        print("int");
+        print(type.toString());
         return null;
     }
 
     @Override
     public Object visit(StringType type) {
-        print("string");
+        print(type.toString());
         return null;
     }
 
     @Override
     public Object visit(VoidType type) {
-        print("void");
+        print(type.toString());
         return null;
     }
 
     @Override
-    public Object visit(BooleanType booleanType) {
-        print("boolean");
+    public Object visit(BooleanType type) {
+        print(type.toString());
         return null;
     }
 

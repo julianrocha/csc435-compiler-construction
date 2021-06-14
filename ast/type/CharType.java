@@ -8,9 +8,17 @@ public class CharType extends Type {
         super(l, o);
     }
 
+    public CharType() {
+    }
+
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "char";
     }
 
 }

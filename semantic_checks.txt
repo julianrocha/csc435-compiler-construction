@@ -1,0 +1,37 @@
+global:
+	id_string equals
+	no params
+	type equals
+
+local:
+	id_string equals
+	type equals
+
+type equivalence:
+	atomic type equals
+	arrays -> atomic type AND length
+
+type of an expression?
+
+resulting type from binary operator?
+
+
+void main(){
+	f();
+}
+
+int f(int x, int y){
+	if(x < y){
+		return 0;
+	} else {
+		if(x == y){
+			return 1;
+		}
+	}
+}
+
+int f(int x, int y){
+	if(x < y){
+
+	}
+}

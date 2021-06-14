@@ -8,9 +8,17 @@ public class VoidType extends Type {
         super(l, o);
     }
 
+    public VoidType() {
+    }
+
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "void";
     }
 
 }

@@ -12,4 +12,10 @@ public abstract class Type extends ASTNode {
 		super(l, o);
 	}
 
+	public abstract String toString();
+
+	public boolean equals(Type other) {
+		return this.toString().equals(other.toString());
+	}
+
 }

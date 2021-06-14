@@ -11,6 +11,10 @@ public class Identifier extends Expression {
         this.id_string = id_string;
     }
 
+    public String toString() {
+        return id_string;
+    }
+
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
