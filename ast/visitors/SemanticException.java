@@ -12,8 +12,9 @@ public class SemanticException extends RuntimeException {
 	}
 
 	public String toString() {
-		// TODO: how should offset handle tabs vs spaces?
-		return "Ln:" + Integer.toString(l) + ", Col:" + Integer.toString(o) + " error: " + msg;
+		// NOTE: for offset, tabs will be counted as one char even if IDE count as 4
+		// spaces
+		return "Error:" + Integer.toString(l) + ":" + Integer.toString(o) + ":" + msg;
 	}
 
 }

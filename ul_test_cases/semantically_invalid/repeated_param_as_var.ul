@@ -1,7 +1,8 @@
-void main(){
-
+void main ()
+{
 }
 
-void f(int x){
+void f (int x)
+{
     int x;
 }

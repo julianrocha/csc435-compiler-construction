@@ -1,4 +1,4 @@
 void main ()
 {
-    void x;
+    1 == 'c';
 }

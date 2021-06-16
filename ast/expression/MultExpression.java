@@ -8,6 +8,7 @@ public class MultExpression extends Expression {
     public Expression rhsExpr;
 
     public MultExpression(Expression lhsExpr, Expression rhsExpr) {
+        super(rhsExpr.line, rhsExpr.offset);
         this.lhsExpr = lhsExpr;
         this.rhsExpr = rhsExpr;
     }

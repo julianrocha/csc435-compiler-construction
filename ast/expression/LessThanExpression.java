@@ -8,6 +8,7 @@ public class LessThanExpression extends Expression {
     public Expression rhsExpr;
 
     public LessThanExpression(Expression lhsExpr, Expression rhsExpr) {
+        super(rhsExpr.line, rhsExpr.offset);
         this.lhsExpr = lhsExpr;
         this.rhsExpr = rhsExpr;
     }

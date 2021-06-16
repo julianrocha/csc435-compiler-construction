@@ -8,6 +8,7 @@ public class AddExpression extends Expression {
     public Expression rhsExpr;
 
     public AddExpression(Expression lhsExpr, Expression rhsExpr) {
+        super(rhsExpr.line, rhsExpr.offset);
         this.lhsExpr = lhsExpr;
         this.rhsExpr = rhsExpr;
     }
