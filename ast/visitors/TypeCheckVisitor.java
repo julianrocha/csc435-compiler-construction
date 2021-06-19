@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.antlr.grammar.v3.ANTLRParser.optionValue_return;
+
 import ast.*;
 import ast.expression.*;
 import ast.statement.*;
@@ -13,6 +15,7 @@ import ast.type.*;
 public class TypeCheckVisitor implements Visitor {
 
 	private HashMap<String, FuncTypeValue> funcEnv;
+	private String currFunc;
 	private HashMap<String, Type> varEnv;
 
 	// Singletons
@@ -25,6 +28,7 @@ public class TypeCheckVisitor implements Visitor {
 
 	public TypeCheckVisitor() {
 		this.funcEnv = new HashMap<String, FuncTypeValue>();
+		this.currFunc = null;
 		this.varEnv = new HashMap<String, Type>();
 	}
 
@@ -59,6 +63,7 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Function function) {
+		currFunc = function.funcDecl.id.toString();
 		varEnv.clear();
 		for (FormalParameter fp : function.funcDecl.formalParameterList) {
 			fp.accept(this);
@@ -369,7 +374,11 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(ReturnStatement returnStatement) {
-		// TODO Auto-generated method stub
+		Type expectedRType = funcEnv.get(currFunc).rType;
+		Type statementRType = returnStatement.expr == null ? VOID_TYPE : (Type) returnStatement.expr.accept(this);
+		if (!expectedRType.equals(statementRType))
+			throw new SemanticException(returnStatement.line, returnStatement.offset, "type mismatch, cannot return '"
+					+ statementRType + "' from function with return type '" + expectedRType + "'");
 		return null;
 	}
 

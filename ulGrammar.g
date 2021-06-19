@@ -133,8 +133,9 @@ printlnStatement
 	returns[PrintlnStatement s]:
 	PRINTLN expr SEMI_COLON {s = new PrintlnStatement($expr.e);};
 returnStatement
+
 	returns[ReturnStatement s]:
-	RETURN expr? SEMI_COLON {s = new ReturnStatement($expr.e);};
+	RETURN expr? SEMI_COLON {s = new ReturnStatement($expr.e,$RETURN.line,$RETURN.pos);};
 assignmentStatement
 	returns[AssignmentStatement s]:
 	id ASSIGN_EQUAL expr SEMI_COLON {s = new AssignmentStatement($id.i,$expr.e);};
