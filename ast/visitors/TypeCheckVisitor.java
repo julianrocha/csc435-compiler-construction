@@ -216,7 +216,7 @@ public class TypeCheckVisitor implements Visitor {
 	@Override
 	public Object visit(LessThanExpression lessThanExpression) {
 		ArrayList<Type> permittedTypes = new ArrayList<Type>(
-				Arrays.asList(INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, STRING_TYPE, BOOLEAN_TYPE));
+				Arrays.asList(INTEGER_TYPE, FLOAT_TYPE, CHAR_TYPE, STRING_TYPE));
 		check_binary_expr(lessThanExpression.lhsExpr, lessThanExpression.rhsExpr, permittedTypes, "<",
 				lessThanExpression.line, lessThanExpression.offset);
 		return BOOLEAN_TYPE;
@@ -283,7 +283,13 @@ public class TypeCheckVisitor implements Visitor {
 		if (!t.equals(INTEGER_TYPE))
 			throw new SemanticException(arrayReference.expr.line, arrayReference.expr.offset,
 					"array index must be type 'int'");
-		return arrayReference.id.accept(this);
+		Type idType = (Type) arrayReference.id.accept(this);
+		if (idType instanceof ArrayType) {
+			ArrayType aType = (ArrayType) idType;
+			return aType.element_type;
+		}
+		throw new SemanticException(arrayReference.line, arrayReference.offset,
+				"variable '" + arrayReference.id + "' of type '" + idType + "' cannot be referenced as an array");
 	}
 
 	@Override
@@ -374,7 +380,12 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(ArrayAssignmentStatement arrayAssignmentStatement) {
-		ArrayType arrayType = (ArrayType) arrayAssignmentStatement.id.accept(this);
+		Type idType = (Type) arrayAssignmentStatement.id.accept(this);
+		if (!(idType instanceof ArrayType))
+			throw new SemanticException(arrayAssignmentStatement.id.line, arrayAssignmentStatement.id.offset,
+					"variable '" + arrayAssignmentStatement.id + "' of type '" + idType
+							+ "' cannot be referenced as an array");
+		ArrayType arrayType = (ArrayType) idType;
 		Type indexType = (Type) arrayAssignmentStatement.index_expr.accept(this);
 		Type assignType = (Type) arrayAssignmentStatement.assign_expr.accept(this);
 		if (!indexType.equals(INTEGER_TYPE))
