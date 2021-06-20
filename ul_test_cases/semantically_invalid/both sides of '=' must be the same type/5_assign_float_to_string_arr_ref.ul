@@ -1,0 +1,6 @@
+void main ()
+{
+	string[10] arr;
+
+	arr[1] = 1.0;
+}

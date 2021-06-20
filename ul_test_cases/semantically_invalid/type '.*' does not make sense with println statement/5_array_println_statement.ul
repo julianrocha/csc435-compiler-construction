@@ -1,0 +1,6 @@
+void main ()
+{
+    float[50] d;
+
+	println d;
+}

@@ -1,0 +1,6 @@
+void main ()
+{
+    float[5] arr;
+
+	arr[4.1];
+}

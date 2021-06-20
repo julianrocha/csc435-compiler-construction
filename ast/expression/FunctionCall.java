@@ -10,6 +10,7 @@ public class FunctionCall extends Expression {
     public Identifier id;
 
     public FunctionCall(Identifier id, List<Expression> exprList) {
+        super(id.line, id.offset);
         this.id = id;
         this.exprList = exprList;
     }

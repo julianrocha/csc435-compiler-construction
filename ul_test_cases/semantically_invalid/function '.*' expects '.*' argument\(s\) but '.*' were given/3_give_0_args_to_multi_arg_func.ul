@@ -1,0 +1,9 @@
+void main ()
+{
+   f();
+}
+
+float f(int x, string f)
+{
+    return 1.1;
+}

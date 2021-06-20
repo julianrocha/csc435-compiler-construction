@@ -1,4 +1,6 @@
 #!/bin/bash
+
+echo "INVALID PROGRAMS:"
 OIFS="$IFS"
 IFS=$'\n'
 for exception_dir in ./ul_test_cases/semantically_invalid/*; do
@@ -17,14 +19,25 @@ for exception_dir in ./ul_test_cases/semantically_invalid/*; do
             offset="${BASH_REMATCH[2]}"
             msg="${BASH_REMATCH[3]}"
             if [ "$line" != "$expected_line" ]; then
-                echo "FAILED:${short_file}:line ${expected_line} expected but line ${line} given"
+                echo "FAILED:${short_file}"
+                echo "  expected line: ${expected_line}"
+                echo "  actual line  : ${line}"
             fi
             if [[ ! $msg =~ $expected_msg ]]; then
-                echo "FAILED:${short_file}:msg '${expected_msg}' expected but msg '${msg}' given"
+                echo "FAILED:${short_file}"
+                echo "  expected msg: ${expected_msg}"
+                echo "  actual msg  : ${msg}"
             fi
         else
-            echo "FAILED:${short_file}:did not throw exception"
+            echo "FAILED:${short_file}"
+            echo "  ${OUTPUT}"
         fi 
     done
 done
 IFS="$OIFS"
+
+echo "VALID PROGRAMS:"
+for file in `find ./ul_test_cases/valid -type f -name *.ul`; do
+    echo "$file"
+    java Compiler $file
+done

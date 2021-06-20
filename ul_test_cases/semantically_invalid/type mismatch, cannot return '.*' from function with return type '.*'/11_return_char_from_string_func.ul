@@ -1,0 +1,12 @@
+void main ()
+{
+    f();
+}
+
+char f()
+{
+	string x;
+
+	x = "hello";
+    return x;
+}

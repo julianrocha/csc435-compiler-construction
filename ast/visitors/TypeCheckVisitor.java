@@ -100,7 +100,6 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(FunctionBody functionBody) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -134,7 +133,7 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(Identifier identifier) {
-		if (!varEnv.containsKey(identifier.toString())) // TODO: see if func can be used as a var
+		if (!varEnv.containsKey(identifier.toString()))
 			throw new SemanticException(identifier.line, identifier.offset,
 					"use of undeclared variable '" + identifier.toString() + "'");
 		return varEnv.get(identifier.toString());
@@ -155,43 +154,36 @@ public class TypeCheckVisitor implements Visitor {
 
 	@Override
 	public Object visit(ArrayType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(CharType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(FloatType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(IntegerType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(StringType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(VoidType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(BooleanType booleanType) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -273,13 +265,13 @@ public class TypeCheckVisitor implements Visitor {
 		FuncTypeValue ft = funcEnv.get(functionCall.id.toString());
 		if (functionCall.exprList.size() != ft.paramTypes.size())
 			throw new SemanticException(functionCall.id.line, functionCall.id.offset,
-					"function '" + functionCall.id.toString() + "' expects " + ft.paramTypes.size()
-							+ " argument(s) but " + functionCall.exprList.size() + " were given");
+					"function '" + functionCall.id.toString() + "' expects '" + ft.paramTypes.size()
+							+ "' argument(s) but '" + functionCall.exprList.size() + "' were given");
 		for (int i = 0; i < ft.paramTypes.size(); i++) {
 			Type t = (Type) functionCall.exprList.get(i).accept(this);
 			if (!t.equals(ft.paramTypes.get(i)))
 				throw new SemanticException(functionCall.exprList.get(i).line, functionCall.exprList.get(i).offset,
-						"function '" + functionCall.id.toString() + "' expects argument " + i + " to be type '"
+						"function '" + functionCall.id.toString() + "' expects argument '" + i + "' to be type '"
 								+ ft.paramTypes.get(i) + "' but type '" + t + "' was given");
 		}
 		return ft.rType;

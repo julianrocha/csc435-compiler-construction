@@ -1,0 +1,10 @@
+void main ()
+{
+	string[10] g;
+
+	g[f(1)];
+}
+
+void f(int x)
+{
+}

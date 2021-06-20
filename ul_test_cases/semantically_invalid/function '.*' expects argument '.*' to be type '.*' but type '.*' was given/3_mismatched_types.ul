@@ -1,0 +1,8 @@
+void main ()
+{
+    g(1, 1.0, "1", '1', true);
+}
+
+void g(int w, float v, string x, boolean y, char z)
+{
+}
