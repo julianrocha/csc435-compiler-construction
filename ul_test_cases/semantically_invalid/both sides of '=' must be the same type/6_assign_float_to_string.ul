@@ -1,0 +1,7 @@
+void main ()
+{
+    string s;
+	float[9] arr;
+
+	s = arr[1];
+}

@@ -1,0 +1,50 @@
+void main ()
+{
+    int i;
+	float f;
+	char c;
+	string s;
+	boolean b;
+
+	int[1] i_arr;
+	float[1] f_arr;
+	char[1] c_arr;
+	string[1] s_arr;
+	boolean[1] b_arr; 
+
+	i_arr[0] = i + 1 - (i_func() * i);
+	f_arr[0] = f + 1.0 - (f_func() * f);
+	c_arr[0] = c + ('1' - c_func());
+	s_arr[0] = s + ("1" + s_func());
+	b_arr[0] = b == (b_func() == b_func());
+	
+	b = i_arr[0] < i - i_func();
+	b = f_arr[0] < f - f_func();
+	b = c_arr[0] < c - c_func();
+	b = s_arr[0] < s + s_func();
+}
+
+int i_func()
+{
+	1;
+}
+
+float f_func()
+{
+	1.0;
+}
+
+char c_func()
+{
+	'1';
+}
+
+string s_func()
+{
+	"1";
+}
+
+boolean b_func()
+{
+	true;
+}

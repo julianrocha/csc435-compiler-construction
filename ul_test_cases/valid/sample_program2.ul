@@ -1,4 +1,4 @@
-int sampleOne (int x, float y)
+int sampleOne (int x, int y)
 {
     if (x<y)
     {
@@ -27,6 +27,6 @@ void main ()
     string[10] a;
     int w;
 
-    println sampleOne(10,9.3);
-    sampleTwo();
+    println sampleOne(10,9);
+    sampleTwo(1);
 }

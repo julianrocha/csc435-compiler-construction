@@ -12,6 +12,16 @@ public class ArrayType extends Type {
         this.array_size = array_size;
     }
 
+    public ArrayType() {
+        this.element_type = null;
+        this.array_size = -1;
+    }
+
+    @Override
+    public String toString() {
+        return this.element_type.toString() + "[" + Integer.toString(this.array_size) + "]";
+    }
+
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);

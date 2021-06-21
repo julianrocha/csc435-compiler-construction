@@ -8,9 +8,17 @@ public class FloatType extends Type {
         super(l, o);
     }
 
+    public FloatType() {
+    }
+
     @Override
     public Object accept(Visitor v) {
         return v.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "float";
     }
 
 }

@@ -11,7 +11,7 @@ compiler:
 	@javac *.java -Xlint:unchecked -Xdiags:verbose
 
 test: grammar compiler
-	@./test_script.sh
+	@./test_scripts/test_script_a2.sh
 
 clean:
 	@rm *.class $(GNAME)*.java $(GNAME).tokens ast/*.class ast/type/*.class ast/statement/*.class ast/expression/*.class ast/visitors/*.class

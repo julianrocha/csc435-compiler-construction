@@ -1,0 +1,7 @@
+void main ()
+{
+    char x;
+	char y;
+
+	x == y;
+}

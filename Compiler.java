@@ -8,7 +8,7 @@
 import org.antlr.runtime.*;
 import java.io.*;
 import ast.*;
-import ast.visitors.PrettyPrintVisitor;
+import ast.visitors.*;
 
 public class Compiler {
 	public static void main(String[] args) throws Exception {
@@ -27,13 +27,17 @@ public class Compiler {
 
 		try {
 			Program tree = parser.program(); // Invoke 'program' as this is the start production rule
-			PrettyPrintVisitor prettyPrintVisitor = new PrettyPrintVisitor();
-			tree.accept(prettyPrintVisitor);
+			// PrettyPrintVisitor visitor = new PrettyPrintVisitor(); // a1
+			TypeCheckVisitor visitor = new TypeCheckVisitor(); // a2
+			tree.accept(visitor);
 		} catch (RecognitionException e) {
 			// A lexical or parsing error occured.
 			// ANTLR will have already printed information on the
 			// console due to code added to the grammar. So there is
 			// nothing to do here.
+		} catch (SemanticException e) {
+			// Semantic Exeption thrown during typecheck traversal of AST
+			System.out.println(e);
 		} catch (Exception e) {
 			System.out.println(e);
 			e.printStackTrace();

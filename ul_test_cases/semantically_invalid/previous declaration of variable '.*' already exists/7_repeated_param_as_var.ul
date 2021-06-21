@@ -1,0 +1,8 @@
+void main ()
+{
+}
+
+void f (int x)
+{
+    int x;
+}

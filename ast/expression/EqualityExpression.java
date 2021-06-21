@@ -8,6 +8,7 @@ public class EqualityExpression extends Expression {
     public Expression rhsExpr;
 
     public EqualityExpression(Expression lhsExpr, Expression rhsExpr) {
+        super(rhsExpr.line, rhsExpr.offset);
         this.lhsExpr = lhsExpr;
         this.rhsExpr = rhsExpr;
     }

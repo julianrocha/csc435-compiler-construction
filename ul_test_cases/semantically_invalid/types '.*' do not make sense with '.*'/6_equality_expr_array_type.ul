@@ -1,0 +1,7 @@
+void main ()
+{
+	int [10] x_array;
+	int [10] y_array;
+
+	x_array == y_array;
+}
