@@ -146,7 +146,10 @@ arrayAssignmentStatement
 
 block
 	returns[List<Statement> slist]
-	@init {slist = new ArrayList<Statement>();}: OPEN_BRACE (statement {slist.add($statement.s);})* CLOSED_BRACE;
+@init {slist = new ArrayList<Statement>();}:
+	OPEN_BRACE (
+		statement {if($statement.s != null){slist.add($statement.s);}}
+	)* CLOSED_BRACE;
 
 expr
 	returns[Expression e]: eqExpr {e = $eqExpr.e;};
