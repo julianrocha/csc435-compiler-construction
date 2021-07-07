@@ -1,0 +1,1 @@
+export CLASSPATH=/home/julianrocha/Desktop/csc435-compiler-construction/antlr.jar:/home/jcorless/csc435/codegen/jasmin-2708/classes/:/home/jcorless/csc435/codegen/polyglot-1.3.4/classes/:/home/jcorless/csc435/codegen/soot-2708/classes/:/home/jcorless/csc435/codegen/polyglot-1.3.4/cup-classes/:$CLASSPATH
