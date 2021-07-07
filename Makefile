@@ -7,11 +7,12 @@ all: grammar compiler
 grammar: $(GSRCS)
 	@java org.antlr.Tool -fo . $(GSRC) 
 
-compiler:
-	@javac *.java -Xlint:unchecked -Xdiags:verbose
+compiler: grammar
+	@javac *.java -Xlint:unchecked -Xdiags:verbose -d classes
 
 test: grammar compiler
 	@./test_scripts/test_script_a2.sh
 
 clean:
-	@rm *.class $(GNAME)*.java $(GNAME).tokens ast/*.class ast/type/*.class ast/statement/*.class ast/expression/*.class ast/visitors/*.class
+	@rm $(GNAME)*.java $(GNAME).tokens
+	@find ./classes -name '*.class' -delete
