@@ -28,3 +28,4 @@ hs_err_pid*
 *.tokens
 *Lexer.java
 *Parser.java
+*.ir

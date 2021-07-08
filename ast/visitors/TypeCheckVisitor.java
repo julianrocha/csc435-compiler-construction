@@ -30,16 +30,6 @@ public class TypeCheckVisitor implements Visitor {
 		this.varEnv = new HashMap<String, Type>();
 	}
 
-	private class FuncTypeValue {
-		public Type rType;
-		public List<Type> paramTypes;
-
-		public FuncTypeValue(Type rType, List<Type> paramTypes) {
-			this.rType = rType;
-			this.paramTypes = paramTypes;
-		}
-	}
-
 	private Type check_binary_expr(Expression lhsExpr, Expression rhsExpr, ArrayList<Type> permittedTypes, String op,
 			int line, int offset) {
 		Type lhs = (Type) lhsExpr.accept(this);

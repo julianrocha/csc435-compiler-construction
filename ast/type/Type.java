@@ -14,6 +14,8 @@ public abstract class Type extends ASTNode {
 
 	public abstract String toString();
 
+	public abstract String toShortString();
+
 	public boolean equals(Type other) {
 		return this.toString().equals(other.toString());
 	}

@@ -23,6 +23,11 @@ public class ArrayType extends Type {
     }
 
     @Override
+    public String toShortString() {
+        return "A" + this.element_type.toShortString();
+    }
+
+    @Override
     public Object accept(Visitor v) {
         return v.visit(this);
     }

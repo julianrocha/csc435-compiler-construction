@@ -1,0 +1,28 @@
+PROG example2
+FUNC main ()V
+{
+	TEMP 0:U  [L("s1")];
+	TEMP 1:U  [L("s2")];
+	TEMP 2:I  [L("a")];
+	TEMP 3:I  [L("b")];
+	TEMP 4:U;
+	TEMP 5:U;
+	TEMP 6:U;
+	TEMP 7:I;
+	TEMP 8:I;
+	TEMP 9:I;
+
+		T4 := "Hello ";
+		T0 := T4;
+		T5 := "world!";
+		T6 := T0 U+ T5;
+		T1 := T6;
+		T7 := 23;
+		T2 := T7;
+		T8 := 5;
+		T9 := T2 I+ T8;
+		T3 := T9;
+		PRINTLNU T1;
+		PRINTI T3;
+		RETURN;
+}
