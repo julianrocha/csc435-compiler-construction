@@ -19,4 +19,8 @@ public class TempAllocator {
 		next++;
 		return newTemp;
 	}
+
+	public TempVar allocate(Type t) {
+		return allocate(t, null, null);
+	}
 }

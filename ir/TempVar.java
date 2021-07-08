@@ -3,10 +3,10 @@ package ir;
 import ast.type.Type;
 
 public class TempVar {
-	Type type;
-	int number;
-	String label;
-	TempSet set;
+	public Type type;
+	public int number;
+	public String label;
+	public TempSet set;
 
 	public enum TempSet {
 		PARAMETER("P"), LOCAL_VARIABLE("L");
