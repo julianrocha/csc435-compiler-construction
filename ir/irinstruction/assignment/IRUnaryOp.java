@@ -17,6 +17,6 @@ public class IRUnaryOp extends IRInstruction {
 
 	@Override
 	public String toString() {
-		return lhs + " := " + op + " " + rhs + ";"; // TODO: ensure type is in op
+		return lhs + " := " + op + " " + rhs + ";";
 	}
 }

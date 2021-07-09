@@ -157,43 +157,36 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(ArrayType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(CharType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(FloatType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(IntegerType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(StringType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(VoidType type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object visit(BooleanType booleanType) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -263,7 +256,7 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(ParenExpression parenExpression) {
-		return parenExpression.expr.accept(this); // TODO: check if this enough
+		return parenExpression.expr.accept(this);
 	}
 
 	@Override

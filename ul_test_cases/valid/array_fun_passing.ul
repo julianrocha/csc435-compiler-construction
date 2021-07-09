@@ -1,0 +1,27 @@
+void main()
+{
+	int[10] i_arr;
+	int i;
+	
+	i = 0;
+	
+	while(i < 10){
+		i_arr[i] = i;
+		i = i + 1;
+	}
+	println sum(i_arr, "test");
+}
+
+int sum(int[10] i_arr, string s){
+	int i;
+	int sum;
+
+	i = 0;
+	sum = 0;
+	while(i<10){
+		println i_arr[i];
+		sum = sum + i_arr[i];
+	}
+	println s;
+	return sum;
+}
