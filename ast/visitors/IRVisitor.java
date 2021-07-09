@@ -38,6 +38,7 @@ public class IRVisitor implements Visitor {
 	private IRProgram irProgram;
 	private HashMap<String, TempVar> varEnv;
 	private HashMap<String, FuncTypeValue> funcEnv;
+	private FuncTypeValue currentFtv;
 
 	// Singletons
 	private static BooleanType BOOLEAN_TYPE = new BooleanType();
@@ -100,10 +101,10 @@ public class IRVisitor implements Visitor {
 		for (FormalParameter fp : function.funcDecl.formalParameterList) {
 			fp.accept(this);
 		}
-		function.funcBody.accept(this);
 		String currFunction = function.funcDecl.id.toString();
-		FuncTypeValue ftv = funcEnv.get(currFunction);
-		IRFunction irFunction = new IRFunction(currFunction, ftv, instrList, tempAllocator);
+		currentFtv = funcEnv.get(currFunction);
+		function.funcBody.accept(this);
+		IRFunction irFunction = new IRFunction(currFunction, currentFtv, instrList, tempAllocator);
 		irProgram.addFunction(irFunction);
 		return null;
 	}
@@ -116,6 +117,8 @@ public class IRVisitor implements Visitor {
 		for (Statement s : functionBody.slist) {
 			s.accept(this);
 		}
+		if (currentFtv.rType.equals(VOID_TYPE) && !(instrList.get(instrList.size() - 1) instanceof IRReturnInstruction))
+			instrList.add(new IRReturnInstruction(null)); // add void return statement if it is not there
 		return null;
 	}
 
