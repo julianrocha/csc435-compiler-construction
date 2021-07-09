@@ -31,4 +31,19 @@ void main ()
     s="this is a string";
     s="azAZ09!,.:_{} ";
     s="_";
+    if(i == 23412){
+        if(f == 0.1){
+            if(b){
+                
+            } else {
+                if(c == ' '){
+                    if(s == "_"){
+                        println "SUCCESS";
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    println "FAIL";
 }

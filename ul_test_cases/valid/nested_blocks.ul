@@ -16,6 +16,7 @@ void f ()
         {
             if (i<1)
             {
+                println "SUCCESS";
                 return;
             }
             else

@@ -11,7 +11,7 @@ int sampleOne (int x, int y)
     return x*y;
 }
 
-void sampleTwo (int x)
+int sampleTwo (int x)
 {
     float[10] b;
 
@@ -20,6 +20,7 @@ void sampleTwo (int x)
         x=x-1;
     }
     x=8;
+    return x;
 }
 
 void main ()
@@ -29,4 +30,13 @@ void main ()
 
     println sampleOne(10,9);
     sampleTwo(1);
+    if(sampleOne(10,9) == 90){
+        if(sampleTwo(1) == 8){
+            println "_";
+            println "SUCCESS";
+            return;
+        }
+    }
+    println "_";
+    println "FAIL";
 }

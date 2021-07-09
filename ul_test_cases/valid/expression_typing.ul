@@ -12,9 +12,15 @@ void main ()
 	string[1] s_arr;
 	boolean[1] b_arr; 
 
+	i = 1;
+	f = 1.0;
+	c = 'a';
+	s = "s";
+	b = false;
+
 	i_arr[0] = i + 1 - (i_func() * i);
 	f_arr[0] = f + 1.0 - (f_func() * f);
-	c_arr[0] = c + ('1' - c_func());
+	c_arr[0] = c + ('a' - c_func());
 	s_arr[0] = s + ("1" + s_func());
 	b_arr[0] = b == (b_func() == b_func());
 	
@@ -22,6 +28,19 @@ void main ()
 	b = f_arr[0] < f - f_func();
 	b = c_arr[0] < c - c_func();
 	b = s_arr[0] < s + s_func();
+	if(i_arr[0] == 1){
+		if(f_arr[0] == 1.0){
+			if(c_arr[0] == 'a'){
+				if(s_arr[0] == "s1"){
+					if(b_arr[0] == false){
+						println "SUCCESS";
+					}
+				}
+			}
+		}
+	} else {
+		println "FAIL";
+	}
 }
 
 int i_func()
@@ -36,7 +55,7 @@ float f_func()
 
 char c_func()
 {
-	'1';
+	'a';
 }
 
 string s_func()

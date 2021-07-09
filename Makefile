@@ -13,6 +13,9 @@ compiler: grammar
 test: grammar compiler
 	@./test_scripts/test_script_a3.sh
 
+verify: grammar compiler
+	@./test_scripts/verify_test_cases.sh
+
 clean:
 	@rm -f $(GNAME)*.java $(GNAME).tokens
 	@rm -r -f ./classes/*

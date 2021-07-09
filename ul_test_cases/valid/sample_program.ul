@@ -14,4 +14,9 @@ void main ()
 {
     print "The factorial of 8 is ";
     println factorial(8);
+    if(factorial(9) == 362880){
+        println "SUCCESS";
+        return;
+    }
+    println "FAIL";
 }

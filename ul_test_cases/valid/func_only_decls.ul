@@ -2,4 +2,5 @@ void main ()
 {
     int x;
     char[1001] r;
+    println "SUCCESS";
 }

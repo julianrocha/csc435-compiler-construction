@@ -1,16 +1,21 @@
 void main ()
 {
-	print f(5);
+	println f(5);
+	if(f(5) == "!!!!!!_"){
+		println "SUCCESS";
+	} else {
+		println "FAIL";
+	}
 }
 
-int f(int n)
+string f(int n)
 {
-	int f;
+	string f;
 
 	if(n < 0)
 	{
-		return 0;
+		return "_";
 	}	
-	f = 1;
+	f = "!";
 	return f + f(n-1);
 }
