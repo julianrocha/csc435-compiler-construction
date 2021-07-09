@@ -15,7 +15,7 @@ test: grammar compiler
 
 clean:
 	@rm -f $(GNAME)*.java $(GNAME).tokens
-	@find ./classes -name '*.class' -delete
+	@rm -r -f ./classes/*
 	@rm -f ./*.ir
 	@rm -f ./*.j
 	@rm -f ./*.class
