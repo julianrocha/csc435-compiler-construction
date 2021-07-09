@@ -17,6 +17,6 @@ public class IRProgram {
 	}
 
 	public String toString() {
-		return "PROG" + name;
+		return "PROG " + name;
 	}
 }

@@ -11,14 +11,14 @@ public class IRFunction {
 	public Type returnType;
 	public List<Type> paramTypes;
 	public List<IRInstruction> instrList;
-	public TempAllocator allocator;
+	public TempAllocator tempAllocator;
 
-	public IRFunction(String name, FuncTypeValue ftv, List<IRInstruction> instrList, TempAllocator allocator) {
+	public IRFunction(String name, FuncTypeValue ftv, List<IRInstruction> instrList, TempAllocator tempAllocator) {
 		this.name = name;
 		this.returnType = ftv.rType;
 		this.paramTypes = ftv.paramTypes;
 		this.instrList = instrList;
-		this.allocator = allocator;
+		this.tempAllocator = tempAllocator;
 	}
 
 	public String toString() {

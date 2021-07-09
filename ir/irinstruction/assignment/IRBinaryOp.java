@@ -19,7 +19,7 @@ public class IRBinaryOp extends IRInstruction {
 
 	@Override
 	public String toString() {
-		return result + " := " + lhs + op + rhs + ";"; // TODO: ensure op has type
+		return result + " := " + lhs + " " + op + " " + rhs + ";"; // TODO: ensure op has type
 	}
 
 }

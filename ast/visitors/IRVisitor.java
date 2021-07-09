@@ -15,7 +15,11 @@ import ast.type.*;
 import ir.*;
 import ir.TempVar.TempSet;
 import ir.irinstruction.IRCallInstruction;
+import ir.irinstruction.IRConditionalGotoInstruction;
+import ir.irinstruction.IRGotoInstruction;
 import ir.irinstruction.IRInstruction;
+import ir.irinstruction.IRLabelInstruction;
+import ir.irinstruction.IRReturnInstruction;
 import ir.irinstruction.PrintIRInstruction;
 import ir.irinstruction.PrintlnIRInstruction;
 import ir.irinstruction.assignment.IRArrayAssign;
@@ -24,10 +28,12 @@ import ir.irinstruction.assignment.IRBinaryOp;
 import ir.irinstruction.assignment.IRConstantAssign;
 import ir.irinstruction.assignment.IRTempAssign;
 import ir.irinstruction.assignment.IRTempAssignArrayRef;
+import ir.irinstruction.assignment.IRUnaryOp;
 
 public class IRVisitor implements Visitor {
 
-	private TempAllocator allocator;
+	private TempAllocator tempAllocator;
+	private LabelAllocator labelAllocator;
 	private List<IRInstruction> instrList;
 	private IRProgram irProgram;
 	private HashMap<String, TempVar> varEnv;
@@ -54,12 +60,16 @@ public class IRVisitor implements Visitor {
 			for (IRFunction f : irProgram.functionList) {
 				out.println(f);
 				out.println("{");
-				for (int i = 0; i < f.allocator.next; i++) {
-					out.println("\t" + f.allocator.temps[i].toLongString());
+				for (int i = 0; i < f.tempAllocator.next; i++) {
+					out.println("\t" + f.tempAllocator.temps[i].toLongString());
 				}
 				out.println();
 				for (IRInstruction instr : f.instrList) {
-					out.println("\t\t" + instr);
+					if (instr instanceof IRLabelInstruction) {
+						out.println(instr);
+					} else {
+						out.println("\t\t" + instr);
+					}
 				}
 				out.println("}");
 			}
@@ -83,7 +93,8 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(Function function) {
-		allocator = new TempAllocator();
+		tempAllocator = new TempAllocator();
+		labelAllocator = new LabelAllocator();
 		instrList = new ArrayList<IRInstruction>();
 		varEnv.clear();
 		for (FormalParameter fp : function.funcDecl.formalParameterList) {
@@ -92,7 +103,7 @@ public class IRVisitor implements Visitor {
 		function.funcBody.accept(this);
 		String currFunction = function.funcDecl.id.toString();
 		FuncTypeValue ftv = funcEnv.get(currFunction);
-		IRFunction irFunction = new IRFunction(currFunction, ftv, instrList, allocator);
+		IRFunction irFunction = new IRFunction(currFunction, ftv, instrList, tempAllocator);
 		irProgram.addFunction(irFunction);
 		return null;
 	}
@@ -120,8 +131,8 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(FormalParameter formalParameter) {
-		TempVar t = allocator.allocate(formalParameter.type, formalParameter.id.toString(), TempSet.PARAMETER);
-		varEnv.put(formalParameter.id.toString(), t);
+		TempVar t = tempAllocator.allocate(formalParameter.type, formalParameter.id.toString(), TempSet.PARAMETER);
+		varEnv.put(formalParameter.id.toString(), t); // TODO: do we need to init array for a param?
 		return null;
 	}
 
@@ -132,7 +143,7 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(VariableDeclaration variableDeclaration) {
-		TempVar t = allocator.allocate(variableDeclaration.type, variableDeclaration.id.toString(),
+		TempVar t = tempAllocator.allocate(variableDeclaration.type, variableDeclaration.id.toString(),
 				TempSet.LOCAL_VARIABLE);
 		varEnv.put(variableDeclaration.id.toString(), t);
 
@@ -193,7 +204,20 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(IfElseStatement ifElseStatement) {
-		// TODO Auto-generated method stub
+		Label else_start = labelAllocator.allocate();
+		Label else_end = labelAllocator.allocate();
+		TempVar condtion = (TempVar) ifElseStatement.ifExpr.accept(this);
+		instrList.add(new IRUnaryOp(condtion, "Z!", condtion));
+		instrList.add(new IRConditionalGotoInstruction(condtion, else_start));
+		for (Statement s : ifElseStatement.ifBlock) {
+			s.accept(this);
+		}
+		instrList.add(new IRGotoInstruction(else_end));
+		instrList.add(new IRLabelInstruction(else_start));
+		for (Statement s : ifElseStatement.elseBlock) {
+			s.accept(this);
+		}
+		instrList.add(new IRLabelInstruction(else_end));
 		return null;
 	}
 
@@ -201,7 +225,7 @@ public class IRVisitor implements Visitor {
 	public Object visit(EqualityExpression equalityExpression) {
 		TempVar lhs = (TempVar) equalityExpression.lhsExpr.accept(this);
 		TempVar rhs = (TempVar) equalityExpression.rhsExpr.accept(this);
-		TempVar result = allocator.allocate(BOOLEAN_TYPE);
+		TempVar result = tempAllocator.allocate(BOOLEAN_TYPE);
 		String op = lhs.type.toShortString() + "==";
 		instrList.add(new IRBinaryOp(result, lhs, op, rhs));
 		return result;
@@ -211,7 +235,7 @@ public class IRVisitor implements Visitor {
 	public Object visit(LessThanExpression lessThanExpression) {
 		TempVar lhs = (TempVar) lessThanExpression.lhsExpr.accept(this);
 		TempVar rhs = (TempVar) lessThanExpression.rhsExpr.accept(this);
-		TempVar result = allocator.allocate(BOOLEAN_TYPE);
+		TempVar result = tempAllocator.allocate(BOOLEAN_TYPE);
 		String op = lhs.type.toShortString() + "<";
 		instrList.add(new IRBinaryOp(result, lhs, op, rhs));
 		return result;
@@ -221,7 +245,7 @@ public class IRVisitor implements Visitor {
 	public Object visit(SubtractExpression subtractExpression) {
 		TempVar lhs = (TempVar) subtractExpression.lhsExpr.accept(this);
 		TempVar rhs = (TempVar) subtractExpression.rhsExpr.accept(this);
-		TempVar result = allocator.allocate(lhs.type);
+		TempVar result = tempAllocator.allocate(lhs.type);
 		String op = lhs.type.toShortString() + "-";
 		instrList.add(new IRBinaryOp(result, lhs, op, rhs));
 		return result;
@@ -231,7 +255,7 @@ public class IRVisitor implements Visitor {
 	public Object visit(MultExpression multExpression) {
 		TempVar lhs = (TempVar) multExpression.lhsExpr.accept(this);
 		TempVar rhs = (TempVar) multExpression.rhsExpr.accept(this);
-		TempVar result = allocator.allocate(lhs.type);
+		TempVar result = tempAllocator.allocate(lhs.type);
 		String op = lhs.type.toShortString() + "*";
 		instrList.add(new IRBinaryOp(result, lhs, op, rhs));
 		return result;
@@ -246,7 +270,7 @@ public class IRVisitor implements Visitor {
 	public Object visit(AddExpression addExpression) {
 		TempVar lhs = (TempVar) addExpression.lhsExpr.accept(this);
 		TempVar rhs = (TempVar) addExpression.rhsExpr.accept(this);
-		TempVar result = allocator.allocate(lhs.type);
+		TempVar result = tempAllocator.allocate(lhs.type);
 		String op = lhs.type.toShortString() + "+";
 		instrList.add(new IRBinaryOp(result, lhs, op, rhs));
 		return result;
@@ -254,7 +278,7 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(IntegerLiteral integerLiteral) {
-		TempVar t = allocator.allocate(INTEGER_TYPE);
+		TempVar t = tempAllocator.allocate(INTEGER_TYPE);
 		instrList.add(new IRConstantAssign(t, Integer.toString(integerLiteral.value)));
 		return t;
 	}
@@ -265,7 +289,7 @@ public class IRVisitor implements Visitor {
 		FuncTypeValue ftv = funcEnv.get(funcName);
 		TempVar result = null;
 		if (!ftv.rType.equals(VOID_TYPE))
-			result = allocator.allocate(ftv.rType);
+			result = tempAllocator.allocate(ftv.rType);
 		List<TempVar> params = new ArrayList<TempVar>();
 		for (Expression e : functionCall.exprList) {
 			params.add((TempVar) e.accept(this));
@@ -279,35 +303,35 @@ public class IRVisitor implements Visitor {
 		TempVar index = (TempVar) arrayReference.expr.accept(this);
 		TempVar arr = varEnv.get(arrayReference.id.toString());
 		Type elementType = ((ArrayType) arr.type).element_type;
-		TempVar result = allocator.allocate(elementType);
+		TempVar result = tempAllocator.allocate(elementType);
 		instrList.add(new IRTempAssignArrayRef(result, arr, index));
 		return result;
 	}
 
 	@Override
 	public Object visit(StringLiteral stringLiteral) {
-		TempVar t = allocator.allocate(STRING_TYPE);
+		TempVar t = tempAllocator.allocate(STRING_TYPE);
 		instrList.add(new IRConstantAssign(t, "\"" + stringLiteral.value + "\""));
 		return t;
 	}
 
 	@Override
 	public Object visit(CharLiteral charLiteral) {
-		TempVar t = allocator.allocate(CHAR_TYPE);
+		TempVar t = tempAllocator.allocate(CHAR_TYPE);
 		instrList.add(new IRConstantAssign(t, "'" + String.valueOf(charLiteral.value) + "'"));
 		return t;
 	}
 
 	@Override
 	public Object visit(FloatLiteral floatLiteral) {
-		TempVar t = allocator.allocate(FLOAT_TYPE);
+		TempVar t = tempAllocator.allocate(FLOAT_TYPE);
 		instrList.add(new IRConstantAssign(t, Float.toString(floatLiteral.value)));
 		return t;
 	}
 
 	@Override
 	public Object visit(BooleanLiteral booleanLiteral) {
-		TempVar t = allocator.allocate(BOOLEAN_TYPE);
+		TempVar t = tempAllocator.allocate(BOOLEAN_TYPE);
 		String literal = booleanLiteral.value ? "TRUE" : "FALSE";
 		instrList.add(new IRConstantAssign(t, literal));
 		return t;
@@ -323,7 +347,14 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(IfStatement ifStatement) {
-		// TODO Auto-generated method stub
+		Label end = labelAllocator.allocate();
+		TempVar condtion = (TempVar) ifStatement.expr.accept(this);
+		instrList.add(new IRUnaryOp(condtion, "Z!", condtion));
+		instrList.add(new IRConditionalGotoInstruction(condtion, end));
+		for (Statement s : ifStatement.block) {
+			s.accept(this);
+		}
+		instrList.add(new IRLabelInstruction(end));
 		return null;
 	}
 
@@ -337,7 +368,17 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(WhileStatement whileStatement) {
-		// TODO Auto-generated method stub
+		Label start = labelAllocator.allocate();
+		Label end = labelAllocator.allocate();
+		instrList.add(new IRLabelInstruction(start));
+		TempVar condition = (TempVar) whileStatement.expr.accept(this);
+		instrList.add(new IRUnaryOp(condition, "Z!", condition));
+		instrList.add(new IRConditionalGotoInstruction(condition, end));
+		for (Statement s : whileStatement.block) {
+			s.accept(this);
+		}
+		instrList.add(new IRGotoInstruction(start));
+		instrList.add(new IRLabelInstruction(end));
 		return null;
 	}
 
@@ -351,7 +392,10 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(ReturnStatement returnStatement) {
-		// TODO Auto-generated method stub
+		TempVar result = null;
+		if (returnStatement.expr != null)
+			result = (TempVar) returnStatement.expr.accept(this);
+		instrList.add(new IRReturnInstruction(result));
 		return null;
 	}
 
