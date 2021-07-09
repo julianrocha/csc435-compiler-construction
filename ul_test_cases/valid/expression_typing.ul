@@ -28,10 +28,12 @@ void main ()
 	b = f_arr[0] < f - f_func();
 	b = c_arr[0] < c - c_func();
 	b = s_arr[0] < s + s_func();
+
+
 	if(i_arr[0] == 1){
 		if(f_arr[0] == 1.0){
 			if(c_arr[0] == 'a'){
-				if(s_arr[0] == "s1"){
+				if(s_arr[0] == "s11"){
 					if(b_arr[0] == false){
 						println "SUCCESS";
 					}
@@ -45,25 +47,25 @@ void main ()
 
 int i_func()
 {
-	1;
+	return 1;
 }
 
 float f_func()
 {
-	1.0;
+	return 1.0;
 }
 
 char c_func()
 {
-	'a';
+	return 'a';
 }
 
 string s_func()
 {
-	"1";
+	return "1";
 }
 
 boolean b_func()
 {
-	true;
+	return true;
 }
