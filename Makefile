@@ -14,6 +14,9 @@ test: grammar compiler
 	@./test_scripts/test_script_a3.sh
 
 clean:
-	@rm $(GNAME)*.java $(GNAME).tokens
+	@rm -f $(GNAME)*.java $(GNAME).tokens
 	@find ./classes -name '*.class' -delete
-	@rm ./*.ir
+	@rm -f ./*.ir
+	@rm -f ./*.j
+	@rm -f ./*.class
+	@echo "Clean!"
