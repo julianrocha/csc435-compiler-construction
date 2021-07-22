@@ -21,4 +21,9 @@ public class FloatType extends Type {
         return "float";
     }
 
+    @Override
+    public String toShortString() {
+        return "F";
+    }
+
 }

@@ -1,0 +1,10 @@
+PROG example1
+FUNC main ()V
+{
+	TEMP 0:U;
+
+		T0 := "Hello World!";
+		PRINTLNU T0;
+		RETURN;
+}
+

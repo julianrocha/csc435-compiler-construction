@@ -28,8 +28,12 @@ public class Compiler {
 		try {
 			Program tree = parser.program(); // Invoke 'program' as this is the start production rule
 			// PrettyPrintVisitor visitor = new PrettyPrintVisitor(); // a1
-			TypeCheckVisitor visitor = new TypeCheckVisitor(); // a2
-			tree.accept(visitor);
+			TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(); // a2
+			tree.accept(typeCheckVisitor);
+			String programName = new File(args[0]).getName().replaceAll(".ul$", "");
+			IRVisitor irVisitor = new IRVisitor(programName); // a3
+			tree.accept(irVisitor);
+			irVisitor.printInstructions();
 		} catch (RecognitionException e) {
 			// A lexical or parsing error occured.
 			// ANTLR will have already printed information on the

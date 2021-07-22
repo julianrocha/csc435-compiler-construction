@@ -3,6 +3,8 @@ void main ()
     4+4;
     if (90<91)
     {
+        println "SUCCESS";
         return;
     }
+    println "FAIL";
 }

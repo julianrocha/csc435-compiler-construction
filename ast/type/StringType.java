@@ -21,4 +21,9 @@ public class StringType extends Type {
         return "string";
     }
 
+    @Override
+    public String toShortString() {
+        return "U";
+    }
+
 }

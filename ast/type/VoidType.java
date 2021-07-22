@@ -21,4 +21,9 @@ public class VoidType extends Type {
         return "void";
     }
 
+    @Override
+    public String toShortString() {
+        return "V";
+    }
+
 }

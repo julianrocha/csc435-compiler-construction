@@ -13,12 +13,14 @@ void main ()
     }
     if (x==0)
     {
+        println "FAIL";
     }
     else
     {
-        print "success";
+        println "SUCCESS";
     }
     if (y==x)
     {
+        println "FAIL";
     }
 }

@@ -21,4 +21,9 @@ public class BooleanType extends Type {
         return "boolean";
     }
 
+    @Override
+    public String toShortString() {
+        return "Z";
+    }
+
 }

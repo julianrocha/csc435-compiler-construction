@@ -21,4 +21,9 @@ public class CharType extends Type {
         return "char";
     }
 
+    @Override
+    public String toShortString() {
+        return "C";
+    }
+
 }

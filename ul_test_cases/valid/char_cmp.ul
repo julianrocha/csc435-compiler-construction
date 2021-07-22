@@ -2,6 +2,14 @@ void main ()
 {
     char x;
 	char y;
+	boolean b;
 
-	x == y;
+	x = 'c';
+	y = 'c';
+	b = x == y;
+	if(b){
+		println "SUCCESS";
+	} else {
+		println "FAIL";
+	}
 }

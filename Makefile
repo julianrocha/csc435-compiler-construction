@@ -11,8 +11,15 @@ compiler: grammar
 	@javac *.java -Xlint:unchecked -Xdiags:verbose -d classes
 
 test: grammar compiler
-	@./test_scripts/test_script_a2.sh
+	@./test_scripts/test_script_a3.sh
+
+verify: grammar compiler
+	@./test_scripts/verify_test_cases.sh
 
 clean:
-	@rm $(GNAME)*.java $(GNAME).tokens
-	@find ./classes -name '*.class' -delete
+	@rm -f $(GNAME)*.java $(GNAME).tokens
+	@rm -r -f ./classes/*
+	@rm -f ./*.ir
+	@rm -f ./*.j
+	@rm -f ./*.class
+	@echo "Clean!"

@@ -24,6 +24,11 @@ To deleted compiled executables, run:
 ```
 $ make clean
 ```
+To verify and type check the test cases without compiling them to bytecode and running them, run:
+```
+make verify
+```
+
 To build and run tests, run:
 ```
 $ make test
@@ -33,3 +38,4 @@ To compile a sample UL program, `my_program.ul`, make sure the `classes/` folder
 ```
 $ java Compiler my_program.ul
 ```
+This will ouput an `.ir` file in the same directory that the command was run from. 

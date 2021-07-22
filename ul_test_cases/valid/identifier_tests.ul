@@ -3,12 +3,21 @@ void main ()
     int azAZ_09;
     float _;
     char[10] a;
+    float[5] f_arr;
+    string p;
+    int x;
 
     a[5]='c';
+    __();
+    p = "4";
+    x = 4;
+    azAZ_09azAZ_09(f_arr,p,x);
+
 }
 
 void azAZ_09azAZ_09 (float[5] azAZ_09, string s, int i)
 {
+    println "SUCCESS";
     return;
 }
 

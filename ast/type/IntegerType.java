@@ -21,4 +21,9 @@ public class IntegerType extends Type {
         return "int";
     }
 
+    @Override
+    public String toShortString() {
+        return "I";
+    }
+
 }
