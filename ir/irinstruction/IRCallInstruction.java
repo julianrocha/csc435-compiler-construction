@@ -3,6 +3,7 @@ package ir.irinstruction;
 import java.util.List;
 
 import ir.TempVar;
+import ir.visitors.Visitor;
 
 public class IRCallInstruction extends IRInstruction {
 
@@ -29,6 +30,10 @@ public class IRCallInstruction extends IRInstruction {
 		}
 		s += ");";
 		return s;
+	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

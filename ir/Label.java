@@ -1,5 +1,7 @@
 package ir;
 
+import ir.visitors.Visitor;
+
 public class Label {
 	int number;
 
@@ -10,4 +12,9 @@ public class Label {
 	public String toString() {
 		return "L" + number;
 	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
+	}
+
 }

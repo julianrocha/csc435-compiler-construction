@@ -2,11 +2,12 @@ package ir.irinstruction.assignment;
 
 import ir.TempVar;
 import ir.irinstruction.IRInstruction;
+import ir.visitors.Visitor;
 
 public class IRConstantAssign extends IRInstruction {
 
-	TempVar lhs;
-	String rhs;
+	public TempVar lhs;
+	public String rhs;
 
 	public IRConstantAssign(TempVar lhs, String rhs) {
 		this.lhs = lhs;
@@ -16,6 +17,11 @@ public class IRConstantAssign extends IRInstruction {
 	@Override
 	public String toString() {
 		return lhs + " := " + rhs + ";";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

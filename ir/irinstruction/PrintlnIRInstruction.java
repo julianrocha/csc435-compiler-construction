@@ -1,10 +1,11 @@
 package ir.irinstruction;
 
 import ir.TempVar;
+import ir.visitors.Visitor;
 
 public class PrintlnIRInstruction extends IRInstruction {
 
-	TempVar t;
+	public TempVar t;
 
 	public PrintlnIRInstruction(TempVar t) {
 		this.t = t;
@@ -13,6 +14,11 @@ public class PrintlnIRInstruction extends IRInstruction {
 	@Override
 	public String toString() {
 		return "PRINTLN" + t.type.toShortString() + " " + t + ";";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

@@ -2,6 +2,7 @@ package ir.irinstruction.assignment;
 
 import ir.TempVar;
 import ir.irinstruction.IRInstruction;
+import ir.visitors.Visitor;
 
 public class IRBinaryOp extends IRInstruction {
 
@@ -20,6 +21,11 @@ public class IRBinaryOp extends IRInstruction {
 	@Override
 	public String toString() {
 		return result + " := " + lhs + " " + op + " " + rhs + ";";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

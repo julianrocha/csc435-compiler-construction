@@ -26,4 +26,14 @@ public class VoidType extends Type {
         return "V";
     }
 
+    @Override
+    public String toJasminString() {
+        return toShortString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return ""; // TODO: this should never get called
+    }
+
 }

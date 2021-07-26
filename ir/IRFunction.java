@@ -5,6 +5,7 @@ import java.util.List;
 import ast.type.Type;
 import ast.visitors.FuncTypeValue;
 import ir.irinstruction.IRInstruction;
+import ir.visitors.Visitor;
 
 public class IRFunction {
 	public String name;
@@ -29,4 +30,9 @@ public class IRFunction {
 		s += ")" + returnType.toShortString();
 		return s;
 	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
+	}
+
 }

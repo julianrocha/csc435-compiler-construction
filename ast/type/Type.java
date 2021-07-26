@@ -16,6 +16,10 @@ public abstract class Type extends ASTNode {
 
 	public abstract String toShortString();
 
+	public abstract String toJasminString();
+
+	public abstract String toJasminPrefix();
+
 	public boolean equals(Type other) {
 		return this.toString().equals(other.toString());
 	}

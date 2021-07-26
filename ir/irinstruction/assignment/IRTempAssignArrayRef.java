@@ -2,12 +2,13 @@ package ir.irinstruction.assignment;
 
 import ir.TempVar;
 import ir.irinstruction.IRInstruction;
+import ir.visitors.Visitor;
 
 public class IRTempAssignArrayRef extends IRInstruction {
 
-	TempVar lhs;
-	TempVar rhs;
-	TempVar rhsindex;
+	public TempVar lhs;
+	public TempVar rhs;
+	public TempVar rhsindex;
 
 	public IRTempAssignArrayRef(TempVar lhs, TempVar rhs, TempVar rhsindex) {
 		this.lhs = lhs;
@@ -18,6 +19,11 @@ public class IRTempAssignArrayRef extends IRInstruction {
 	@Override
 	public String toString() {
 		return lhs + " := " + rhs + "[" + rhsindex + "];";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

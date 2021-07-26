@@ -2,6 +2,7 @@ package ir.irinstruction;
 
 import ir.Label;
 import ir.TempVar;
+import ir.visitors.Visitor;
 
 public class IRConditionalGotoInstruction extends IRInstruction {
 	TempVar operand;
@@ -15,5 +16,9 @@ public class IRConditionalGotoInstruction extends IRInstruction {
 	@Override
 	public String toString() {
 		return "IF " + operand + " GOTO " + l + ";";
+	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 }

@@ -26,4 +26,14 @@ public class IntegerType extends Type {
         return "I";
     }
 
+    @Override
+    public String toJasminString() {
+        return toShortString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "i";
+    }
+
 }

@@ -3,6 +3,8 @@ package ir;
 import java.util.ArrayList;
 import java.util.List;
 
+import ir.visitors.Visitor;
+
 public class IRProgram {
 	public String name;
 	public List<IRFunction> functionList;
@@ -19,4 +21,9 @@ public class IRProgram {
 	public String toString() {
 		return "PROG " + name;
 	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
+	}
+
 }

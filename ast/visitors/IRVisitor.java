@@ -89,7 +89,7 @@ public class IRVisitor implements Visitor {
 		for (Function f : program.funcList) {
 			f.accept(this);
 		}
-		return null;
+		return irProgram;
 	}
 
 	@Override
