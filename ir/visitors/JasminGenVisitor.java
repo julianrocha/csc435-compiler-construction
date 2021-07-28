@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.swing.text.DefaultStyledDocument.ElementSpec;
-
 import ast.type.StringType;
 import ast.type.*;
 import ir.*;
@@ -222,8 +220,142 @@ public class JasminGenVisitor implements Visitor {
 
 	@Override
 	public Object visit(IRBinaryOp irBinaryOp) {
-		// TODO Auto-generated method stub
+		int loadLhsNum = irBinaryOp.lhs.number;
+		int loadRhsNum = irBinaryOp.rhs.number;
+		int destStoreNum = irBinaryOp.result.number;
+		Type type = irBinaryOp.result.type;
+		String instructions = "";
+		switch (irBinaryOp.op) {
+			case ("+"):
+				if (type.equals(INTEGER_TYPE)) {
+					instructions = intAddition(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(FLOAT_TYPE)) {
+					instructions = floatAddition(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(CHAR_TYPE)) {
+					instructions = charAddition(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(STRING_TYPE)) {
+					instructions = stringAddition(loadLhsNum, loadRhsNum, destStoreNum);
+				}
+				break;
+			case ("-"):
+				if (type.equals(INTEGER_TYPE)) {
+					instructions = intSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(FLOAT_TYPE)) {
+					instructions = floatSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(CHAR_TYPE)) {
+					instructions = charSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+				}
+				break;
+			case ("*"):
+				if (type.equals(INTEGER_TYPE)) {
+					instructions = intMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(FLOAT_TYPE)) {
+					instructions = floatMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
+				}
+				break;
+			case ("<"):
+				if (type.equals(INTEGER_TYPE)) {
+					instructions = intLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(FLOAT_TYPE)) {
+					instructions = floatLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(CHAR_TYPE)) {
+					instructions = charLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(STRING_TYPE)) {
+					instructions = stringLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+				}
+				break;
+			case ("=="):
+				if (type.equals(INTEGER_TYPE)) {
+					instructions = intEquality(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(FLOAT_TYPE)) {
+					instructions = floatEquality(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(CHAR_TYPE)) {
+					instructions = charEquality(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(STRING_TYPE)) {
+					instructions = stringEquality(loadLhsNum, loadRhsNum, destStoreNum);
+				} else if (type.equals(BOOLEAN_TYPE)) {
+					instructions = booleanEquality(loadLhsNum, loadRhsNum, destStoreNum);
+				}
+				break;
+		}
+		println(instructions);
 		return null;
+	}
+
+	private String intAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\niadd\nistore " + destStoreNum;
+	}
+
+	private String floatAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfadd\nfstore " + destStoreNum;
+	}
+
+	private String charAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\niadd\ni2c\nistore " + destStoreNum;
+	}
+
+	private String stringAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "new java/lang/StringBuffer\ndup\ninvokenonvirtual java/lang/StringBuffer/<init>()V\naload " + loadLhsNum
+				+ "\ninvokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;\naload "
+				+ loadRhsNum
+				+ "invokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;\ninvokevirtual java/lang/StringBuffer/toString()Ljava/lang/String;\nastore "
+				+ destStoreNum;
+	}
+
+	private String intSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nisub\nistore " + destStoreNum;
+	}
+
+	private String floatSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfsub\nfstore " + destStoreNum;
+	}
+
+	private String charSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nisub\ni2c\nistore " + destStoreNum;
+	}
+
+	private String intMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nimul\nistore " + destStoreNum;
+	}
+
+	private String floatMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfmul\nfstore " + destStoreNum;
+	}
+
+	private String intLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String floatLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String charLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String stringLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String intEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String floatEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String charEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String stringEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "";
+	}
+
+	private String booleanEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nixor\nldc 1\nixor\nistore " + destStoreNum;
 	}
 
 	@Override
@@ -272,7 +404,13 @@ public class JasminGenVisitor implements Visitor {
 
 	@Override
 	public Object visit(IRUnaryOp irUnaryOp) {
-		// TODO Auto-generated method stub
+		// TODO: this only handles Z!
+		int loadNum = irUnaryOp.rhs.number;
+		int storeNum = irUnaryOp.lhs.number;
+		println("iload " + loadNum);
+		println("ldc 1");
+		println("ixor");
+		println("istore " + storeNum);
 		return null;
 	}
 

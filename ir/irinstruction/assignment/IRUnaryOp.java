@@ -6,9 +6,9 @@ import ir.visitors.Visitor;
 
 public class IRUnaryOp extends IRInstruction {
 
-	TempVar lhs;
-	String op;
-	TempVar rhs;
+	public TempVar lhs;
+	public String op;
+	public TempVar rhs;
 
 	public IRUnaryOp(TempVar lhs, String op, TempVar rhs) {
 		this.lhs = lhs;

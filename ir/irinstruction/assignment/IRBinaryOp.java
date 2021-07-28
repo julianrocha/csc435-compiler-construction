@@ -6,10 +6,10 @@ import ir.visitors.Visitor;
 
 public class IRBinaryOp extends IRInstruction {
 
-	TempVar result;
-	TempVar lhs;
-	String op;
-	TempVar rhs;
+	public TempVar result;
+	public TempVar lhs;
+	public String op;
+	public TempVar rhs;
 
 	public IRBinaryOp(TempVar result, TempVar lhs, String op, TempVar rhs) {
 		this.result = result;
