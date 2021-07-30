@@ -117,8 +117,14 @@ public class IRVisitor implements Visitor {
 		for (Statement s : functionBody.slist) {
 			s.accept(this);
 		}
-		if (currentFtv.rType.equals(VOID_TYPE) && !(instrList.get(instrList.size() - 1) instanceof IRReturnInstruction))
-			instrList.add(new IRReturnInstruction(null)); // add void return statement if it is not there
+		if (!(instrList.get(instrList.size() - 1) instanceof IRReturnInstruction)) {
+			if (currentFtv.rType.equals(VOID_TYPE)) {
+				instrList.add(new IRReturnInstruction(null)); // add void return statement if it is not there
+			} else {
+				TempVar returnTemp = tempAllocator.allocate(currentFtv.rType);
+				instrList.add(new IRReturnInstruction(returnTemp)); // add non-void return with garbage value
+			}
+		}
 		return null;
 	}
 

@@ -16,6 +16,7 @@ public class JasminGenVisitor implements Visitor {
 	private PrintWriter out;
 	private boolean indent;
 	private String className;
+	private LabelAllocator labelAllocator;
 
 	// Singletons
 	private static BooleanType BOOLEAN_TYPE = new BooleanType();
@@ -27,6 +28,10 @@ public class JasminGenVisitor implements Visitor {
 
 	public JasminGenVisitor() {
 		indent = false;
+	}
+
+	private String getJasminLabel() {
+		return "L_" + labelAllocator.allocate().number;
 	}
 
 	private void println(String s) {
@@ -68,6 +73,7 @@ public class JasminGenVisitor implements Visitor {
 			// translate IR functions to jasmin
 			for (IRFunction f : irProgram.functionList) {
 				println("");
+				labelAllocator = new LabelAllocator();
 				f.accept(this);
 			}
 
@@ -99,7 +105,9 @@ public class JasminGenVisitor implements Visitor {
 		// Translate IR instructions to jasmin
 		println(".limit stack 16"); // TODO: how is this number calculated?
 		for (IRInstruction irInstruction : irFunction.instrList) {
-			println(";\t\t" + irInstruction.toString());
+			indent = false;
+			println(";\t\t\t\t" + irInstruction.toString());
+			indent = true;
 			irInstruction.accept(this);
 		}
 		indent = false;
@@ -109,7 +117,9 @@ public class JasminGenVisitor implements Visitor {
 
 	@Override
 	public Object visit(Label label) {
+		indent = false;
 		println(label.toString() + ":");
+		indent = true;
 		return null;
 	}
 
@@ -126,19 +136,30 @@ public class JasminGenVisitor implements Visitor {
 
 	@Override
 	public Object visit(IRCallInstruction irCallInstruction) {
-		// TODO Auto-generated method stub
+		String callString = "invokestatic " + className + "/" + irCallInstruction.functionName + "(";
+		for (TempVar t : irCallInstruction.params) {
+			println(t.type.toJasminPrefix() + "load " + t.number);
+			callString += t.type.toJasminString();
+		}
+		if (irCallInstruction.result != null) { // non-void return function
+			println(callString + ")" + irCallInstruction.result.type.toJasminString());
+			println(irCallInstruction.result.type.toJasminPrefix() + "store " + irCallInstruction.result.number);
+		} else { // void return function
+			println(callString + ")V");
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(IRConditionalGotoInstruction irConditionalGotoInstruction) {
-		// TODO Auto-generated method stub
+		println("iload " + irConditionalGotoInstruction.operand.number);
+		println("ifne " + irConditionalGotoInstruction.l.toString());
 		return null;
 	}
 
 	@Override
 	public Object visit(IRGotoInstruction irGotoInstruction) {
-		// println("goto " + irGotoInstruction.l.toString());
+		println("goto " + irGotoInstruction.l.toString());
 		return null;
 	}
 
@@ -223,139 +244,261 @@ public class JasminGenVisitor implements Visitor {
 		int loadLhsNum = irBinaryOp.lhs.number;
 		int loadRhsNum = irBinaryOp.rhs.number;
 		int destStoreNum = irBinaryOp.result.number;
-		Type type = irBinaryOp.result.type;
-		String instructions = "";
-		switch (irBinaryOp.op) {
+		Type type = irBinaryOp.lhs.type;
+		String operation = irBinaryOp.op.substring(1);
+		switch (operation) {
 			case ("+"):
 				if (type.equals(INTEGER_TYPE)) {
-					instructions = intAddition(loadLhsNum, loadRhsNum, destStoreNum);
+					intAddition(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(FLOAT_TYPE)) {
-					instructions = floatAddition(loadLhsNum, loadRhsNum, destStoreNum);
+					floatAddition(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(CHAR_TYPE)) {
-					instructions = charAddition(loadLhsNum, loadRhsNum, destStoreNum);
+					charAddition(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(STRING_TYPE)) {
-					instructions = stringAddition(loadLhsNum, loadRhsNum, destStoreNum);
+					stringAddition(loadLhsNum, loadRhsNum, destStoreNum);
 				}
 				break;
 			case ("-"):
 				if (type.equals(INTEGER_TYPE)) {
-					instructions = intSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+					intSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(FLOAT_TYPE)) {
-					instructions = floatSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+					floatSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(CHAR_TYPE)) {
-					instructions = charSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
+					charSubtraction(loadLhsNum, loadRhsNum, destStoreNum);
 				}
 				break;
 			case ("*"):
 				if (type.equals(INTEGER_TYPE)) {
-					instructions = intMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
+					intMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(FLOAT_TYPE)) {
-					instructions = floatMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
+					floatMultiplication(loadLhsNum, loadRhsNum, destStoreNum);
 				}
 				break;
 			case ("<"):
 				if (type.equals(INTEGER_TYPE)) {
-					instructions = intLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+					intLessThan(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(FLOAT_TYPE)) {
-					instructions = floatLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+					floatLessThan(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(CHAR_TYPE)) {
-					instructions = charLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+					charLessThan(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(STRING_TYPE)) {
-					instructions = stringLessThan(loadLhsNum, loadRhsNum, destStoreNum);
+					stringLessThan(loadLhsNum, loadRhsNum, destStoreNum);
 				}
 				break;
 			case ("=="):
 				if (type.equals(INTEGER_TYPE)) {
-					instructions = intEquality(loadLhsNum, loadRhsNum, destStoreNum);
+					intEquality(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(FLOAT_TYPE)) {
-					instructions = floatEquality(loadLhsNum, loadRhsNum, destStoreNum);
+					floatEquality(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(CHAR_TYPE)) {
-					instructions = charEquality(loadLhsNum, loadRhsNum, destStoreNum);
+					charEquality(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(STRING_TYPE)) {
-					instructions = stringEquality(loadLhsNum, loadRhsNum, destStoreNum);
+					stringEquality(loadLhsNum, loadRhsNum, destStoreNum);
 				} else if (type.equals(BOOLEAN_TYPE)) {
-					instructions = booleanEquality(loadLhsNum, loadRhsNum, destStoreNum);
+					booleanEquality(loadLhsNum, loadRhsNum, destStoreNum);
 				}
 				break;
 		}
-		println(instructions);
 		return null;
 	}
 
-	private String intAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\niadd\nistore " + destStoreNum;
+	private void binaryLoad(int loadLhsNum, int loadRhsNum, String type) {
+		println(type + "load " + loadLhsNum);
+		println(type + "load " + loadRhsNum);
 	}
 
-	private String floatAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfadd\nfstore " + destStoreNum;
+	private void store(int destStoreNum, String type) {
+		println(type + "store " + destStoreNum);
 	}
 
-	private String charAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\niadd\ni2c\nistore " + destStoreNum;
+	private void addition(String type) {
+		println(type + "add");
 	}
 
-	private String stringAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "new java/lang/StringBuffer\ndup\ninvokenonvirtual java/lang/StringBuffer/<init>()V\naload " + loadLhsNum
-				+ "\ninvokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;\naload "
-				+ loadRhsNum
-				+ "invokevirtual java/lang/StringBuffer/append(Ljava/lang/String;)Ljava/lang/StringBuffer;\ninvokevirtual java/lang/StringBuffer/toString()Ljava/lang/String;\nastore "
-				+ destStoreNum;
+	private void subtraction(String type) {
+		println(type + "sub");
 	}
 
-	private String intSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nisub\nistore " + destStoreNum;
+	private void multiplication(String type) {
+		println(type + "mul");
 	}
 
-	private String floatSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfsub\nfstore " + destStoreNum;
+	private void intAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = INTEGER_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		addition(type);
+		store(destStoreNum, type);
 	}
 
-	private String charSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nisub\ni2c\nistore " + destStoreNum;
+	private void floatAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = FLOAT_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		addition(type);
+		store(destStoreNum, type);
 	}
 
-	private String intMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nimul\nistore " + destStoreNum;
+	private void charAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = CHAR_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		addition(type);
+		println("i2c");
+		store(destStoreNum, type);
 	}
 
-	private String floatMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "fload " + loadLhsNum + "\nfload " + loadRhsNum + "\nfmul\nfstore " + destStoreNum;
+	private void stringAddition(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String stringType = STRING_TYPE.toJasminString();
+		String stringPrefix = STRING_TYPE.toJasminPrefix();
+		println("new java/lang/StringBuffer");
+		println("dup");
+		println("invokenonvirtual java/lang/StringBuffer/<init>()V");
+		println(stringPrefix + "load " + loadLhsNum);
+		println("invokevirtual java/lang/StringBuffer/append(" + stringType + ")Ljava/lang/StringBuffer;");
+		println(stringPrefix + "load " + loadRhsNum);
+		println("invokevirtual java/lang/StringBuffer/append(" + stringType + ")Ljava/lang/StringBuffer;");
+		println("invokevirtual java/lang/StringBuffer/toString()" + stringType);
+		println(stringPrefix + "store " + destStoreNum);
 	}
 
-	private String intLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void intSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = INTEGER_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		store(destStoreNum, type);
 	}
 
-	private String floatLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void floatSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = FLOAT_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		store(destStoreNum, type);
 	}
 
-	private String charLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void charSubtraction(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = CHAR_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		println("i2c");
+		store(destStoreNum, type);
 	}
 
-	private String stringLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void intMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = INTEGER_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		multiplication(type);
+		store(destStoreNum, type);
 	}
 
-	private String intEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void floatMultiplication(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = FLOAT_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		multiplication(type);
+		store(destStoreNum, type);
 	}
 
-	private String floatEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void intLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = INTEGER_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		lessThan(destStoreNum, label1, label2);
 	}
 
-	private String charEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void floatLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = FLOAT_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		println("fcmpg");
+		lessThan(destStoreNum, label1, label2);
 	}
 
-	private String stringEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "";
+	private void charLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = CHAR_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		lessThan(destStoreNum, label1, label2);
 	}
 
-	private String booleanEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
-		return "iload " + loadLhsNum + "\niload " + loadRhsNum + "\nixor\nldc 1\nixor\nistore " + destStoreNum;
+	private void stringLessThan(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String jasminPrefix = STRING_TYPE.toJasminPrefix();
+		String jasminType = STRING_TYPE.toJasminString();
+		binaryLoad(loadLhsNum, loadRhsNum, jasminPrefix);
+		println("invokevirtual java/lang/String/compareTo(" + jasminType + ")I");
+		lessThan(destStoreNum, label1, label2);
+	}
+
+	private void intEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = INTEGER_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		equality(destStoreNum, label1, label2);
+	}
+
+	private void floatEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = FLOAT_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		println("fcmpg");
+		equality(destStoreNum, label1, label2);
+	}
+
+	private void charEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String type = CHAR_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		subtraction(type);
+		equality(destStoreNum, label1, label2);
+	}
+
+	private void stringEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String label1 = getJasminLabel();
+		String label2 = getJasminLabel();
+		String jasminPrefix = STRING_TYPE.toJasminPrefix();
+		String jasminType = STRING_TYPE.toJasminString();
+		binaryLoad(loadLhsNum, loadRhsNum, jasminPrefix);
+		println("invokevirtual java/lang/String/compareTo(" + jasminType + ")I");
+		equality(destStoreNum, label1, label2);
+	}
+
+	private void booleanEquality(int loadLhsNum, int loadRhsNum, int destStoreNum) {
+		String type = BOOLEAN_TYPE.toJasminPrefix();
+		binaryLoad(loadLhsNum, loadRhsNum, type);
+		println("ixor");
+		println("ldc 1");
+		println("ixor");
+		store(destStoreNum, type);
+	}
+
+	private void equality(int destStoreNum, String label1, String label2) {
+		compare(destStoreNum, label1, label2, "ifeq");
+	}
+
+	private void lessThan(int destStoreNum, String label1, String label2) {
+		compare(destStoreNum, label1, label2, "iflt");
+	}
+
+	private void compare(int destStoreNum, String label1, String label2, String cmpInstr) {
+		String type = BOOLEAN_TYPE.toJasminPrefix();
+		println(cmpInstr + " " + label1);
+		println("ldc 0");
+		println("goto " + label2);
+		indent = false;
+		println(label1 + ":");
+		indent = true;
+		println("ldc 1");
+		indent = false;
+		println(label2 + ":");
+		indent = true;
+		store(destStoreNum, type);
 	}
 
 	@Override
@@ -393,12 +536,20 @@ public class JasminGenVisitor implements Visitor {
 	public Object visit(IRTempAssignArrayRef irTempAssignArrayRef) {
 		int arrayLoadNum = irTempAssignArrayRef.rhs.number;
 		int indexLoadNum = irTempAssignArrayRef.rhsindex.number;
-		String prefix = irTempAssignArrayRef.lhs.type.toJasminPrefix();
 		int destStoreNum = irTempAssignArrayRef.lhs.number;
+		String storePrefix = irTempAssignArrayRef.lhs.type.toJasminPrefix();
+		String loadPrefix;
+		if (irTempAssignArrayRef.lhs.type.equals(CHAR_TYPE)) {
+			loadPrefix = "c";
+		} else if (irTempAssignArrayRef.lhs.type.equals(BOOLEAN_TYPE)) {
+			loadPrefix = "b";
+		} else {
+			loadPrefix = storePrefix;
+		}
 		println("aload " + arrayLoadNum);
 		println("iload " + indexLoadNum);
-		println(prefix + "aload");
-		println(prefix + "store " + destStoreNum);
+		println(loadPrefix + "aload");
+		println(storePrefix + "store " + destStoreNum);
 		return null;
 	}
 

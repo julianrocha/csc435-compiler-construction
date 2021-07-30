@@ -7,9 +7,9 @@ import ir.visitors.Visitor;
 
 public class IRCallInstruction extends IRInstruction {
 
-	String functionName;
-	TempVar result;
-	List<TempVar> params;
+	public String functionName;
+	public TempVar result;
+	public List<TempVar> params;
 
 	public IRCallInstruction(String functionName, TempVar result, List<TempVar> params) {
 		this.functionName = functionName;

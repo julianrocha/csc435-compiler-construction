@@ -3,7 +3,7 @@ package ir;
 import ir.visitors.Visitor;
 
 public class Label {
-	int number;
+	public int number;
 
 	public Label(int number) {
 		this.number = number;

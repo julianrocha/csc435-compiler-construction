@@ -5,8 +5,8 @@ import ir.TempVar;
 import ir.visitors.Visitor;
 
 public class IRConditionalGotoInstruction extends IRInstruction {
-	TempVar operand;
-	Label l;
+	public TempVar operand;
+	public Label l;
 
 	public IRConditionalGotoInstruction(TempVar operand, Label l) {
 		this.operand = operand;
