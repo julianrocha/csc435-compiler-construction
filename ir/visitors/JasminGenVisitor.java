@@ -17,6 +17,8 @@ public class JasminGenVisitor implements Visitor {
 	private boolean indent;
 	private String className;
 	private LabelAllocator labelAllocator;
+	private String funcJasminLabel1;
+	private String funcJasminLabel2;
 
 	// Singletons
 	private static BooleanType BOOLEAN_TYPE = new BooleanType();
@@ -24,7 +26,6 @@ public class JasminGenVisitor implements Visitor {
 	private static FloatType FLOAT_TYPE = new FloatType();
 	private static IntegerType INTEGER_TYPE = new IntegerType();
 	private static StringType STRING_TYPE = new StringType();
-	private static VoidType VOID_TYPE = new VoidType();
 
 	public JasminGenVisitor() {
 		indent = false;
@@ -96,6 +97,9 @@ public class JasminGenVisitor implements Visitor {
 		println(".method public static " + funcName + "(" + paramTypes + ")" + returnType);
 		indent = true;
 
+		funcJasminLabel1 = getJasminLabel();
+		funcJasminLabel2 = getJasminLabel();
+
 		// Declare local variables
 		println(".limit locals " + irFunction.tempAllocator.next);
 		for (int i = 0; i < irFunction.tempAllocator.next; i++) {
@@ -103,7 +107,10 @@ public class JasminGenVisitor implements Visitor {
 		}
 
 		// Translate IR instructions to jasmin
-		println(".limit stack 16"); // TODO: how is this number calculated?
+		println(".limit stack 16");
+		indent = false;
+		println(funcJasminLabel1 + ":");
+		indent = true;
 		for (IRInstruction irInstruction : irFunction.instrList) {
 			indent = false;
 			println(";\t\t\t\t" + irInstruction.toString());
@@ -111,6 +118,7 @@ public class JasminGenVisitor implements Visitor {
 			irInstruction.accept(this);
 		}
 		indent = false;
+		println(funcJasminLabel2 + ":");
 		println(".end method");
 		return null;
 	}
@@ -129,7 +137,7 @@ public class JasminGenVisitor implements Visitor {
 		variableDirective += tempVar.number + " is ";
 		variableDirective += tempVar.label == null ? tempVar.toString() : tempVar.label;
 		variableDirective += " " + tempVar.type.toJasminString();
-		// TODO: missing 'from label to label' directive
+		variableDirective += " from " + funcJasminLabel1 + " to " + funcJasminLabel2;
 		println(variableDirective);
 		return null;
 	}

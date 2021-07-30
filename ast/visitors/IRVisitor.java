@@ -141,7 +141,7 @@ public class IRVisitor implements Visitor {
 	@Override
 	public Object visit(FormalParameter formalParameter) {
 		TempVar t = tempAllocator.allocate(formalParameter.type, formalParameter.id.toString(), TempSet.PARAMETER);
-		varEnv.put(formalParameter.id.toString(), t); // TODO: do we need to init array for a param?
+		varEnv.put(formalParameter.id.toString(), t);
 		return null;
 	}
 
@@ -341,7 +341,7 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(AssignmentStatement assignmentStatement) {
-		TempVar rhs = (TempVar) assignmentStatement.expr.accept(this); // TODO: may create 1 extra tmp: `x =arr[2];`
+		TempVar rhs = (TempVar) assignmentStatement.expr.accept(this);
 		TempVar lhs = varEnv.get(assignmentStatement.id.toString());
 		instrList.add(new IRTempAssign(lhs, rhs));
 		return null;
