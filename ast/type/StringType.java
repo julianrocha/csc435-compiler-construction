@@ -26,4 +26,14 @@ public class StringType extends Type {
         return "U";
     }
 
+    @Override
+    public String toJasminString() {
+        return "Ljava/lang/String;";
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "a";
+    }
+
 }

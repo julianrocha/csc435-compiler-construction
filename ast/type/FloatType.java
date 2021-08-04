@@ -26,4 +26,14 @@ public class FloatType extends Type {
         return "F";
     }
 
+    @Override
+    public String toJasminString() {
+        return toShortString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "f";
+    }
+
 }

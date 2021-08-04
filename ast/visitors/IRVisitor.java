@@ -89,7 +89,7 @@ public class IRVisitor implements Visitor {
 		for (Function f : program.funcList) {
 			f.accept(this);
 		}
-		return null;
+		return irProgram;
 	}
 
 	@Override
@@ -117,8 +117,14 @@ public class IRVisitor implements Visitor {
 		for (Statement s : functionBody.slist) {
 			s.accept(this);
 		}
-		if (currentFtv.rType.equals(VOID_TYPE) && !(instrList.get(instrList.size() - 1) instanceof IRReturnInstruction))
-			instrList.add(new IRReturnInstruction(null)); // add void return statement if it is not there
+		if (!(instrList.get(instrList.size() - 1) instanceof IRReturnInstruction)) {
+			if (currentFtv.rType.equals(VOID_TYPE)) {
+				instrList.add(new IRReturnInstruction(null)); // add void return statement if it is not there
+			} else {
+				TempVar returnTemp = tempAllocator.allocate(currentFtv.rType);
+				instrList.add(new IRReturnInstruction(returnTemp)); // add non-void return with garbage value
+			}
+		}
 		return null;
 	}
 
@@ -135,7 +141,7 @@ public class IRVisitor implements Visitor {
 	@Override
 	public Object visit(FormalParameter formalParameter) {
 		TempVar t = tempAllocator.allocate(formalParameter.type, formalParameter.id.toString(), TempSet.PARAMETER);
-		varEnv.put(formalParameter.id.toString(), t); // TODO: do we need to init array for a param?
+		varEnv.put(formalParameter.id.toString(), t);
 		return null;
 	}
 
@@ -335,7 +341,7 @@ public class IRVisitor implements Visitor {
 
 	@Override
 	public Object visit(AssignmentStatement assignmentStatement) {
-		TempVar rhs = (TempVar) assignmentStatement.expr.accept(this); // TODO: may create 1 extra tmp: `x =arr[2];`
+		TempVar rhs = (TempVar) assignmentStatement.expr.accept(this);
 		TempVar lhs = varEnv.get(assignmentStatement.id.toString());
 		instrList.add(new IRTempAssign(lhs, rhs));
 		return null;

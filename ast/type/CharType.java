@@ -26,4 +26,14 @@ public class CharType extends Type {
         return "C";
     }
 
+    @Override
+    public String toJasminString() {
+        return toShortString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "i";
+    }
+
 }

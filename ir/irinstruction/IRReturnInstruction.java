@@ -1,10 +1,11 @@
 package ir.irinstruction;
 
 import ir.TempVar;
+import ir.visitors.Visitor;
 
 public class IRReturnInstruction extends IRInstruction {
 
-	TempVar operand;
+	public TempVar operand;
 
 	public IRReturnInstruction(TempVar operand) {
 		this.operand = operand;
@@ -13,6 +14,11 @@ public class IRReturnInstruction extends IRInstruction {
 	@Override
 	public String toString() {
 		return operand == null ? "RETURN;" : "RETURN " + operand + ";";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

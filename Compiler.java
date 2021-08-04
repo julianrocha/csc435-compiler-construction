@@ -9,6 +9,8 @@ import org.antlr.runtime.*;
 import java.io.*;
 import ast.*;
 import ast.visitors.*;
+import ir.IRProgram;
+import ir.visitors.JasminGenVisitor;
 
 public class Compiler {
 	public static void main(String[] args) throws Exception {
@@ -31,9 +33,11 @@ public class Compiler {
 			TypeCheckVisitor typeCheckVisitor = new TypeCheckVisitor(); // a2
 			tree.accept(typeCheckVisitor);
 			String programName = new File(args[0]).getName().replaceAll(".ul$", "");
-			IRVisitor irVisitor = new IRVisitor(programName); // a3
-			tree.accept(irVisitor);
-			irVisitor.printInstructions();
+			IRVisitor irVisitor = new IRVisitor(programName);
+			IRProgram irProgram = (IRProgram) tree.accept(irVisitor);
+			// irVisitor.printInstructions(); // a3
+			JasminGenVisitor jasVisitor = new JasminGenVisitor();
+			irProgram.accept(jasVisitor); // a4
 		} catch (RecognitionException e) {
 			// A lexical or parsing error occured.
 			// ANTLR will have already printed information on the

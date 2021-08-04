@@ -11,7 +11,7 @@ compiler: grammar
 	@javac *.java -Xlint:unchecked -Xdiags:verbose -d classes
 
 test: grammar compiler
-	@./test_scripts/test_script_a3.sh
+	@./test_scripts/test_script_a4.sh
 
 verify: grammar compiler
 	@./test_scripts/verify_test_cases.sh

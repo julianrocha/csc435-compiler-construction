@@ -26,4 +26,14 @@ public class BooleanType extends Type {
         return "Z";
     }
 
+    @Override
+    public String toJasminString() {
+        return toShortString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "i";
+    }
+
 }

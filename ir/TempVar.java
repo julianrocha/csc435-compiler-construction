@@ -1,6 +1,7 @@
 package ir;
 
 import ast.type.Type;
+import ir.visitors.Visitor;
 
 public class TempVar {
 	public Type type;
@@ -36,6 +37,10 @@ public class TempVar {
 
 	public String toString() {
 		return "T" + number;
+	}
+
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

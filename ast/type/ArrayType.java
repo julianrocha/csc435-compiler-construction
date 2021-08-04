@@ -32,4 +32,14 @@ public class ArrayType extends Type {
         return v.visit(this);
     }
 
+    @Override
+    public String toJasminString() {
+        return "[" + this.element_type.toJasminString();
+    }
+
+    @Override
+    public String toJasminPrefix() {
+        return "a";
+    }
+
 }

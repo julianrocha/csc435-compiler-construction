@@ -1,10 +1,11 @@
 package ir.irinstruction;
 
 import ir.Label;
+import ir.visitors.Visitor;
 
 public class IRLabelInstruction extends IRInstruction {
 
-	Label l;
+	public Label l;
 
 	public IRLabelInstruction(Label l) {
 		this.l = l;
@@ -13,6 +14,11 @@ public class IRLabelInstruction extends IRInstruction {
 	@Override
 	public String toString() {
 		return l + ":;";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 
 }

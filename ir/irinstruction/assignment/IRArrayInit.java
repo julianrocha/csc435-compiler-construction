@@ -3,12 +3,13 @@ package ir.irinstruction.assignment;
 import ast.type.Type;
 import ir.TempVar;
 import ir.irinstruction.IRInstruction;
+import ir.visitors.Visitor;
 
 public class IRArrayInit extends IRInstruction {
 
-	TempVar lhs;
-	Type t;
-	int size;
+	public TempVar lhs;
+	public Type t;
+	public int size;
 
 	public IRArrayInit(TempVar lhs, Type t, int size) {
 		this.lhs = lhs;
@@ -19,5 +20,10 @@ public class IRArrayInit extends IRInstruction {
 	@Override
 	public String toString() {
 		return lhs + " := NEWARRAY " + t.toShortString() + " " + size + ";";
+	}
+
+	@Override
+	public Object accept(Visitor v) {
+		return v.visit(this);
 	}
 }
